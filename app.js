@@ -76,6 +76,13 @@ const sectorColors = {
 
 // ========== Load Data ==========
 async function loadData() {
+  // Use global COMPANIES_DATA from data.js if available (for local file protocol support)
+  if (typeof COMPANIES_DATA !== 'undefined') {
+    companiesData = COMPANIES_DATA;
+    init();
+    return;
+  }
+  
   try {
     const res = await fetch("./data.json");
     companiesData = await res.json();

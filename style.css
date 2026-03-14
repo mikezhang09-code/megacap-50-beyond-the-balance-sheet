@@ -291,6 +291,8 @@
   font-weight: 500;
   color: var(--color-text-muted);
   border: 1px solid var(--color-divider);
+  text-decoration: none;
+  cursor: pointer;
 }
 .nav-btn:hover { background: var(--color-surface-offset); color: var(--color-text); border-color: var(--color-border); }
 .nav-btn.active { background: var(--color-primary); color: var(--color-text-inverse); border-color: var(--color-primary); }
