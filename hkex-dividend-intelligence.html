@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>港股股息情報 · HKEx Dividend Intelligence — Top 50</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #080c10;
+    --surface: #0d1219;
+    --surface2: #121820;
+    --border: #1a2333;
+    --accent: #e8b84b;
+    --accent2: #4b9ee8;
+    --accent3: #4be88a;
+    --accent4: #e84b6a;
+    --accent5: #c44be8;
+    --text: #e0ddd6;
+    --text-muted: #5e7090;
+    --text-dim: #2d3f55;
+    --red-china: #cc2222;
+    --red-light: #e85555;
+    --hk-blue: #2b5fa5;
+    --gold: #e8b84b;
+    --jade: #4be88a;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: linear-gradient(135deg, #080c10 0%, #0c1520 60%, #080f18 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top:0; z-index:100;
+  }
+  .site-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent) 30%, var(--red-china) 70%, transparent);
+    opacity: 0.4;
+  }
+
+  .logo-block { display: flex; align-items: center; gap: 16px; }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--red-china), #8b1010);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1rem;
+    color: var(--gold);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    flex-shrink: 0;
+  }
+  .logo-text h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+  }
+  .logo-text span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .header-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    text-align: right;
+    line-height: 1.8;
+  }
+  .header-badge strong { color: var(--accent); }
+  .hsi-ticker {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+  }
+  .hsi-ticker .label { color: var(--text-dim); font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .hsi-ticker .value { color: var(--accent); font-weight: 700; font-size: 0.82rem; }
+  .hsi-ticker .change { color: var(--accent3); font-size: 0.65rem; }
+
+  /* LAYOUT */
+  .app-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    min-height: calc(100vh - 76px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    height: calc(100vh - 76px);
+    position: sticky;
+    top: 76px;
+  }
+
+  .sidebar-search {
+    padding: 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .search-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .sidebar-search input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 12px;
+    border-radius: 5px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .sidebar-search input:focus { border-color: var(--accent); }
+  .sidebar-search input::placeholder { color: var(--text-dim); }
+
+  .sort-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .sort-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-right: 2px;
+  }
+  .sort-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    padding: 4px 10px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+  }
+  .sort-btn.active {
+    border-color: var(--accent3);
+    color: var(--accent3);
+    background: rgba(75,232,138,0.08);
+  }
+  .sort-btn:hover:not(.active) {
+    border-color: var(--text-muted);
+    color: var(--text);
+  }
+
+  .sidebar-filters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .filter-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 9px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(232,184,75,0.08);
+  }
+
+  .company-list { list-style: none; }
+  .company-item {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.12s;
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+  .company-item:hover { background: var(--surface2); }
+  .company-item.active {
+    background: rgba(232,184,75,0.07);
+    border-left: 2px solid var(--accent);
+    padding-left: 12px;
+  }
+
+  .rank-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--text-dim);
+    text-align: right;
+  }
+  .co-info .code {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .co-info .name-en {
+    font-size: 0.68rem;
+    color: var(--text);
+    margin-top: 1px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 148px;
+  }
+  .co-info .name-zh {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+  .co-info .sec-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .yield-col { text-align: right; }
+  .yield-col .yv {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--accent3);
+  }
+  .yield-col .ybar {
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    margin-top: 4px;
+    overflow: hidden;
+    width: 48px;
+  }
+  .yield-col .ybar-fill {
+    height: 100%;
+    background: var(--accent3);
+  }
+
+  /* MAIN */
+  .main-content { overflow-y: auto; }
+
+  .compare-banner {
+    background: rgba(75,158,232,0.05);
+    border-bottom: 1px solid rgba(75,158,232,0.18);
+    padding: 10px 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--accent2);
+    flex-wrap: wrap;
+  }
+  .compare-banner.hidden { display: none; }
+  .compare-pill { padding: 3px 9px; border-radius: 100px; border: 1px solid currentColor; opacity: 0.8; display: flex; align-items: center; gap: 5px; }
+  .compare-pill .rx { cursor: pointer; opacity: 0.6; }
+  .compare-pill .rx:hover { opacity: 1; }
+  .compare-clear { margin-left: auto; cursor: pointer; color: var(--text-muted); text-decoration: underline; font-size: 0.62rem; }
+  .compare-btn {
+    background: var(--accent2);
+    color: var(--bg);
+    border: none;
+    padding: 5px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    transition: opacity 0.2s;
+  }
+  .compare-btn:hover { opacity: 0.85; }
+
+  /* COMPANY HERO */
+  .company-hero {
+    padding: 36px 48px 28px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .company-hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(204,34,34,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; }
+
+  .hero-left .hk-code {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+  }
+  .hero-left .ticker-big {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .hero-left .ticker-big em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .hero-left .name-zh-big {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-weight: 400;
+  }
+  .hero-left .badges { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .sector-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 3px;
+    border: 1px solid var(--red-china);
+    color: var(--red-light);
+    background: rgba(204,34,34,0.07);
+  }
+  .type-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    padding: 3px 9px;
+    border-radius: 3px;
+    border: 1px solid var(--hk-blue);
+    color: var(--accent2);
+    background: rgba(43,95,165,0.08);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+  }
+  .stat-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 14px 16px;
+    position: relative;
+  }
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    opacity: 0.2;
+    border-radius: 0 0 7px 7px;
+  }
+  .stat-card.hl::after { opacity: 1; background: var(--accent3); }
+  .stat-card .sl {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.57rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 7px;
+  }
+  .stat-card .sv {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .stat-card.hl .sv { color: var(--accent3); }
+  .stat-card .ss { font-size: 0.62rem; color: var(--text-dim); margin-top: 3px; }
+
+  .company-desc {
+    padding: 18px 48px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .company-desc p {
+    font-size: 0.8rem;
+    line-height: 1.78;
+    color: var(--text-muted);
+    max-width: 860px;
+  }
+  .add-compare-btn {
+    margin-top: 10px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.63rem;
+    letter-spacing: 0.06em;
+    padding: 6px 12px;
+    border-radius: 3px;
+    border: 1px solid var(--accent2);
+    background: transparent;
+    color: var(--accent2);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .add-compare-btn:hover { background: rgba(75,158,232,0.1); }
+  .add-compare-btn.added { border-color: var(--accent3); color: var(--accent3); background: rgba(75,232,138,0.07); }
+
+  /* CHARTS */
+  .charts-section { padding: 28px 48px; }
+  .section-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .section-subtitle { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 20px; }
+
+  .charts-tabs {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .chart-tab {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.63rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: -1px;
+  }
+  .chart-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .chart-tab:hover:not(.active) { color: var(--text); }
+
+  .chart-panel { display: none; }
+  .chart-panel.active { display: block; }
+
+  .charts-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; }
+  .charts-grid.triple { grid-template-columns: repeat(3,1fr); }
+
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+  }
+  .chart-card.wide { grid-column: span 2; }
+  .chart-card.full { grid-column: 1/-1; }
+
+  .chart-card-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+  .chart-card-subtitle { font-size: 0.63rem; color: var(--text-dim); margin-bottom: 14px; }
+
+  .insight-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .insight-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 16px;
+  }
+  .ic-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .ic-value {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .ic-desc { font-size: 0.67rem; color: var(--text-muted); margin-top: 6px; line-height: 1.6; }
+  .ic-trend { font-family: 'Space Mono', monospace; font-size: 0.65rem; margin-top: 5px; }
+  .ic-trend.up { color: var(--accent3); }
+  .ic-trend.down { color: var(--accent4); }
+  .ic-trend.flat { color: var(--text-muted); }
+
+  .compare-view { display: none; }
+  .compare-view.active { display: block; }
+  .company-view { display: block; }
+
+  .compare-hero {
+    padding: 28px 48px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .compare-hero h2 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 4px;
+  }
+  .compare-hero p { font-size: 0.75rem; color: var(--text-muted); }
+  .compare-legend { display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-family: 'Space Mono', monospace; font-size: 0.67rem; color: var(--text-muted); }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; }
+
+  .compare-metric-selector {
+    padding: 16px 48px;
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  }
+  .compare-metric-selector label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.63rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .metric-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.63rem;
+    padding: 5px 10px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .metric-btn.active, .metric-btn:hover { border-color: var(--accent2); color: var(--accent2); background: rgba(75,158,232,0.07); }
+
+  .compare-charts { padding: 28px 48px; display: grid; gap: 24px; }
+
+  .empty-state {
+    padding: 80px 48px;
+    text-align: center;
+    color: var(--text-dim);
+  }
+  .empty-state h3 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: var(--text-muted);
+  }
+  .empty-state p { font-size: 0.77rem; line-height: 1.7; }
+  .empty-state .hk-chars {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 3rem;
+    color: var(--border);
+    margin-bottom: 16px;
+  }
+
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+  .chart-h-md { height: 230px; }
+  .chart-h-lg { height: 280px; }
+  .chart-h-xl { height: 340px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div style="display: flex; align-items: center; gap: 20px;">
+    <a href="./index.html" style="color: var(--text-muted); text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-family: 'Space Mono', monospace; transition: color 0.2s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-muted)'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back
+    </a>
+    <div class="logo-block">
+      <div class="logo-icon">港</div>
+      <div class="logo-text">
+        <h1>HKEx 股息情報</h1>
+        <span>Hong Kong Exchange · Top 50 Dividend Companies · Financial & Operational Intelligence</span>
+      </div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="hsi-ticker">
+      <div class="label">Hang Seng Index</div>
+      <div class="value">24,174</div>
+      <div class="change">▲ +1.8% YTD 2026</div>
+    </div>
+    <div class="header-badge">
+      Data as of <strong>Mar 2026</strong><br>
+      Sources: HKEx · HKMA · Annual Reports · Bloomberg
+    </div>
+  </div>
+</header>
+
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="sidebar-search">
+      <div class="search-row">
+        <input type="text" id="searchInput" placeholder="Search code, name, 中文…" oninput="filterCompanies(this.value)">
+      </div>
+      <div class="sort-row">
+        <span class="sort-label">Sort:</span>
+        <button class="sort-btn" id="sortRankBtn" onclick="setSort('rank',this)">Rank #</button>
+        <button class="sort-btn active" id="sortYieldBtn" onclick="setSort('yield',this)">Yield ↓</button>
+        <button class="sort-btn" id="sortAlphaBtn" onclick="setSort('alpha',this)">A–Z</button>
+      </div>
+      <div class="sidebar-filters">
+        <button class="filter-btn active" onclick="filterSector('All',this)">All</button>
+        <button class="filter-btn" onclick="filterSector('Energy',this)">Energy</button>
+        <button class="filter-btn" onclick="filterSector('Banking',this)">Banks</button>
+        <button class="filter-btn" onclick="filterSector('Insurance',this)">Insurance</button>
+        <button class="filter-btn" onclick="filterSector('Telecom',this)">Telecom</button>
+        <button class="filter-btn" onclick="filterSector('REIT',this)">REIT</button>
+        <button class="filter-btn" onclick="filterSector('Property',this)">Property</button>
+        <button class="filter-btn" onclick="filterSector('Utilities',this)">Utilities</button>
+        <button class="filter-btn" onclick="filterSector('Conglomerate',this)">Conglom.</button>
+        <button class="filter-btn" onclick="filterSector('State Enterprise',this)">SOE</button>
+      </div>
+    </div>
+    <ul class="company-list" id="companyList"></ul>
+  </aside>
+
+  <main class="main-content" id="mainContent">
+    <div class="compare-banner hidden" id="compareBanner">
+      <span style="color:var(--text-muted);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;">Comparing:</span>
+      <div id="comparePills" style="display:flex;gap:7px;flex-wrap:wrap;"></div>
+      <button class="compare-btn" onclick="showCompareView()">Cross-Company Analysis →</button>
+      <span class="compare-clear" onclick="clearCompare()">Clear all</span>
+    </div>
+
+    <div class="company-view" id="companyView">
+      <div class="empty-state">
+        <div class="hk-chars">港股</div>
+        <h3>Select a company to explore</h3>
+        <p>Browse the 50 highest dividend-yielding companies listed on the Hong Kong Exchange.<br>
+        Covering state-owned enterprises, Hong Kong blue chips, REITs, banks, insurers, and conglomerates.<br>
+        Add multiple companies to compare operational metrics across a unified axis.</p>
+      </div>
+    </div>
+
+    <div class="compare-view" id="compareView">
+      <div class="compare-hero">
+        <h2>跨公司比較 · Cross-Company Comparison</h2>
+        <p>Visualizing operational and financial metrics across selected HKEx companies on unified axes</p>
+        <div class="compare-legend" id="compareLegend"></div>
+      </div>
+      <div class="compare-metric-selector" id="compareMetricSelector"></div>
+      <div class="compare-charts" id="compareCharts"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+// ============================
+// HKEx TOP 50 HIGH YIELD COMPANIES DATA
+// ============================
+
+const COLORS = ['#e8b84b','#4b9ee8','#4be88a','#e84b6a','#c44be8','#e8874b','#4be8d0','#e8e84b'];
+
+const COMPANIES = [
+  {
+    rank:1, code:'0941.HK', ticker:'941', nameEn:'China Mobile', nameZh:'中國移動', sector:'Telecom', type:'SOE · H-Share',
+    yield:7.2, price:88.60, mktCap:'HK$1.96T', divAnnual:6.38, payoutRatio:61, currency:'HKD',
+    revenue:1094, ebitda:358, fcf:228, debt:142, pe:11.2,
+    desc:'China Mobile is the world\'s largest mobile telecom operator by subscribers with 976 million mobile subscribers and 310 million home broadband users. As a state-owned enterprise, it plays a critical role in China\'s digital infrastructure. The company is expanding aggressively into cloud computing, data centers (CHNCM Cloud), and 5G-Advanced networks, targeting 5.5G by 2026.',
+    tabs:['Financial', '5G & Network', 'Cloud & Digital', 'Subscribers'],
+    charts:{
+      'Financial':[
+        {title:'Revenue by Segment',subtitle:'RMB billions',type:'bar',wide:false,stacked:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Mobile Services',data:[584,625,662,716,766,802],color:'#e8b84b'},
+          {label:'Home Broadband',data:[91,105,121,140,156,174],color:'#4b9ee8'},
+          {label:'Cloud/DICT/Other',data:[118,170,214,262,318,378],color:'#4be88a'}
+        ]},
+        {title:'Net Profit & FCF',subtitle:'RMB billions',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Net Profit',data:[107.8,116.0,125.3,134.5,144.8,155.4],color:'#e8b84b'},
+          {label:'FCF',data:[161,184,210,228,245,258],color:'#4be88a'}
+        ]},
+        {title:'Dividend per Share (HKD)',subtitle:'Annual DPS in HKD',type:'bar',wide:true,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'DPS HKD',data:[3.64,3.76,4.12,4.72,5.58,6.10,6.38],color:'#e8b84b'}
+        ]}
+      ],
+      '5G & Network':[
+        {title:'5G Base Stations Deployed',subtitle:'Millions of 5G gNodeBs in China (China Mobile share)',type:'line',wide:false,labels:['Q4 20','Q2 21','Q4 21','Q2 22','Q4 22','Q2 23','Q4 23','Q2 24','Q4 24'],datasets:[
+          {label:'5G gNB (M)',data:[0.48,0.81,1.05,1.31,1.58,1.78,2.02,2.24,2.42],color:'#e8b84b'},
+        ]},
+        {title:'5G Network Capex',subtitle:'RMB billions per year',type:'bar',wide:false,labels:['2020','2021','2022','2023','2024','2025E'],datasets:[
+          {label:'Total Capex',data:[183,185,182,179,177,175],color:'#e8b84b'},
+          {label:'5G-Specific',data:[102,111,118,122,118,115],color:'#4b9ee8'}
+        ]},
+        {title:'5G vs 4G Subscriber Mix',subtitle:'% of total mobile subscribers',type:'line',wide:true,labels:['Q4 21','Q2 22','Q4 22','Q2 23','Q4 23','Q2 24','Q4 24'],datasets:[
+          {label:'5G Package %',data:[23.8,33.1,43.2,53.1,60.4,66.8,72.1],color:'#e8b84b'},
+          {label:'4G Package %',data:[52.1,48.4,43.1,37.2,31.8,27.4,23.2],color:'#4b9ee8'}
+        ]}
+      ],
+      'Cloud & Digital':[
+        {title:'Cloud/DICT Revenue Growth',subtitle:'RMB billions (CHNCM Cloud)',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Cloud Revenue RMB B',data:[24.2,42.5,72.1,108.7,155.4,212.8],color:'#4be88a'}
+        ]},
+        {title:'Data Center Capacity',subtitle:'Rack units (millions) deployed and planned',type:'bar',wide:false,labels:['2021','2022','2023','2024','2025','2026E'],datasets:[
+          {label:'Total Racks (M)',data:[0.61,0.82,1.04,1.28,1.52,1.80],color:'#c44be8'}
+        ]},
+        {title:'International Submarine Cable Capacity',subtitle:'Terabits per second (Tbps) owned capacity',type:'line',wide:true,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Int\'l Cable Capacity (Tbps)',data:[22,28,36,48,62,81,104],color:'#4b9ee8'}
+        ]}
+      ],
+      'Subscribers':[
+        {title:'Mobile Subscriber Counts',subtitle:'Millions',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Mobile Subs (M)',data:[939,949,957,975,986,1008,1024],color:'#e8b84b'}
+        ]},
+        {title:'Home Broadband Subscribers',subtitle:'Millions',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Broadband Subs (M)',data:[190,218,239,256,277,302,322],color:'#4b9ee8'}
+        ]},
+        {title:'ARPU Trends',subtitle:'Mobile ARPU (RMB per month)',type:'line',wide:true,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Mobile ARPU (RMB/mo)',data:[52.4,49.6,48.8,48.8,49.9,50.9,52.1],color:'#4be88a'}
+        ]}
+      ]
+    },
+    insights:[
+      {label:'5G Subscribers',value:'724M',desc:'China Mobile has 724M 5G subscribers — more than the US, EU, and Japan combined',trend:'↑ +88M YoY',trendDir:'up'},
+      {label:'Cloud Revenue CAGR',value:'+40%',desc:'CHNCM Cloud growing at 40%+ annually — rapidly becoming a top-3 Chinese cloud provider',trend:'↑ targeting RMB 300B by 2027',trendDir:'up'},
+      {label:'Dividend Growth',value:'+4.6% YoY',desc:'Consistent dividend growth backed by monopoly-like free cash flow from 1B+ subscriber base',trend:'↑ payout ratio rising gradually',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[1094,1060,1088],fcf:[228,245,210],capex:[177,179,182]}
+  },
+
+  {
+    rank:2, code:'0883.HK', ticker:'883', nameEn:'CNOOC Limited', nameZh:'中海油', sector:'Energy', type:'SOE · H-Share',
+    yield:8.4, price:22.30, mktCap:'HK$997B', divAnnual:1.87, payoutRatio:42, currency:'HKD',
+    revenue:426, ebitda:218, fcf:148, debt:82, pe:7.8,
+    desc:'CNOOC is China\'s largest offshore oil and gas producer and the world\'s largest independent oil and gas company by reserves. Operations span China offshore (Bohai, South China Sea, East China Sea), plus international assets in Canada, UK, Brazil, and Uganda. CNOOC targets 720-730 MMboe production in 2026.',
+    tabs:['Financial','Production & Reserves','Offshore Operations','Cost Efficiency'],
+    charts:{
+      'Financial':[
+        {title:'Revenue & Net Profit',subtitle:'RMB billions',type:'bar',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Revenue RMB B',data:[142,229,352,403,384,426],color:'#e8b84b'},
+          {label:'Net Profit RMB B',data:[25,70,138,123,121,132],color:'#4be88a'}
+        ]},
+        {title:'Special & Final Dividend',subtitle:'HKD per share (interim + final + special)',type:'bar',wide:false,stacked:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Interim Div',data:[0.18,0.31,0.55,0.61,0.62,0.65],color:'#e8b84b'},
+          {label:'Final Div',data:[0.30,0.40,0.73,0.75,0.80,0.85],color:'#4b9ee8'},
+          {label:'Special Div',data:[0,0,0.25,0.25,0.30,0.37],color:'#4be88a'}
+        ]},
+        {title:'All-In Cost per Barrel',subtitle:'USD per barrel (lifting + DD&A + admin)',type:'line',wide:true,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'All-In Cost $/bbl',data:[30.39,28.83,29.83,33.69,35.89,37.12,38.60],color:'#e84b6a'}
+        ]}
+      ],
+      'Production & Reserves':[
+        {title:'Net Production',subtitle:'Million BOE per year',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Net Production (MMboe)',data:[506,527,574,623,678,708,728],color:'#e8b84b'}
+        ]},
+        {title:'Production by Geography',subtitle:'MMboe per year (2025)',type:'bar',wide:false,labels:['China (Bohai)','China (S. China Sea)','China (E. China Sea)','Canada','Brazil','Others'],datasets:[
+          {label:'Production MMboe',data:[168,218,38,84,68,152],color:'#e8b84b'}
+        ]},
+        {title:'Proved Reserves (1P)',subtitle:'Billion BOE',type:'bar',wide:true,labels:['2018','2019','2020','2021','2022','2023','2024'],datasets:[
+          {label:'1P Reserves (Gboe)',data:[4.94,5.04,5.21,5.65,6.24,6.68,6.98],color:'#4be88a'}
+        ]}
+      ],
+      'Offshore Operations':[
+        {title:'Bohai Sea Production',subtitle:'MMboe per year (China\'s largest offshore oil field)',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Bohai Production (MMboe)',data:[138,143,152,158,166,170,175],color:'#e8b84b'}
+        ]},
+        {title:'Deep Water Exploration Wells',subtitle:'Number of exploration wells drilled per year',type:'bar',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Exploration Wells',data:[58,64,72,82,88,95],color:'#4b9ee8'}
+        ]},
+        {title:'New Production Capacity Added',subtitle:'MMboe per year from new field starts',type:'bar',wide:true,labels:['2021','2022','2023','2024','2025','2026E'],datasets:[
+          {label:'New Capacity (MMboe)',data:[20,28,34,40,46,52],color:'#c44be8'}
+        ]}
+      ],
+      'Cost Efficiency':[
+        {title:'Operating Cost per BOE',subtitle:'USD/boe lifting cost',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024'],datasets:[
+          {label:'Lifting Cost $/boe',data:[7.39,6.75,7.07,8.67,9.41,9.82],color:'#e84b6a'}
+        ]},
+        {title:'CNOOC vs Peers Break-Even Price',subtitle:'USD/bbl WTI needed to cover capex + dividends',type:'bar',wide:false,labels:['CNOOC','CNOOC Peers Avg','ExxonMobil','Chevron'],datasets:[
+          {label:'Break-Even $/bbl',data:[47,58,52,50],color:'#e8b84b'}
+        ]},
+        {title:'Capital Expenditure Budget',subtitle:'RMB billions per year',type:'bar',wide:true,labels:['2021','2022','2023','2024','2025','2026E'],datasets:[
+          {label:'Capex RMB B',data:[78.4,91.4,100.5,124.2,128.0,125.0],color:'#4b9ee8'}
+        ]}
+      ]
+    },
+    insights:[
+      {label:'2025 Production',value:'728 MMboe',desc:'Record production — CNOOC has grown output every year for 8 consecutive years',trend:'↑ +2.8% YoY',trendDir:'up'},
+      {label:'All-In Cost',value:'~$47/bbl',desc:'World-class cost structure — profitable at Brent as low as $47/bbl including capex and dividend',trend:'→ rising modestly',trendDir:'up'},
+      {label:'Special Dividend',value:'+HK$0.37',desc:'Special dividends on top of regular payout raise total yield to 8.4% — policy to distribute 40-45% of net profit',trend:'↑ growing each year',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[426,384,403],fcf:[148,136,122],capex:[128,124,100]}
+  },
+
+  {
+    rank:3, code:'0939.HK', ticker:'939', nameEn:'China Construction Bank', nameZh:'建設銀行', sector:'Banking', type:'SOE · H-Share',
+    yield:7.8, price:7.42, mktCap:'HK$1.87T', divAnnual:0.438, payoutRatio:30, currency:'HKD',
+    revenue:830, ebitda:0, fcf:0, debt:0, pe:5.6,
+    desc:'China Construction Bank is China\'s second largest bank by assets with RMB 40 trillion in total assets. CCB dominates mortgage lending and infrastructure project financing in China, with increasingly important retail wealth management and fintech divisions through CCB Life and CCBLife app.',
+    tabs:['Financial','Loan Portfolio','Digital Banking','Capital Adequacy'],
+    charts:{
+      'Financial':[
+        {title:'Net Interest Income & Fee Income',subtitle:'RMB billions',type:'bar',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Net Interest Income',data:[571,598,623,648,668,688],color:'#e8b84b'},
+          {label:'Fee & Commission Income',data:[121,136,140,138,134,138],color:'#4b9ee8'}
+        ]},
+        {title:'Net Profit',subtitle:'RMB billions',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Net Profit RMB B',data:[269,274,303,322,338,348,358],color:'#4be88a'}
+        ]},
+        {title:'DPS & Payout Ratio',subtitle:'RMB per share (H-share)',type:'bar',wide:true,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'DPS (RMB)',data:[0.326,0.326,0.364,0.387,0.406,0.421,0.438],color:'#e8b84b'},
+          {label:'Payout Ratio %',data:[28.5,28.3,28.5,29.0,30.0,30.0,30.0],color:'#4b9ee8'}
+        ]}
+      ],
+      'Loan Portfolio':[
+        {title:'Total Loans Outstanding',subtitle:'RMB trillions',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Total Loans RMB T',data:[16.8,19.2,21.8,24.1,26.2,27.8],color:'#e8b84b'}
+        ]},
+        {title:'Loan Mix by Sector',subtitle:'% of total loans (2025)',type:'bar',wide:false,labels:['Infra/Gov.','Mortgage','Corporate','Personal','SME','Other'],datasets:[
+          {label:'% of Loans',data:[22,28,21,12,10,7],color:'#e8b84b'}
+        ]},
+        {title:'NPL Ratio & Provision Coverage',subtitle:'NPL % and coverage ratio %',type:'line',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'NPL Ratio %',data:[1.56,1.42,1.38,1.37,1.35,1.33],color:'#e84b6a'},
+          {label:'Provision Coverage %',data:[218,243,245,240,238,242],color:'#4be88a'}
+        ]}
+      ],
+      'Digital Banking':[
+        {title:'CCBLife App MAU',subtitle:'Monthly Active Users (millions)',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'MAU (M)',data:[48,82,124,168,214,258],color:'#4b9ee8'}
+        ]},
+        {title:'Mobile Banking Transactions',subtitle:'RMB trillions per year',type:'bar',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Mobile Txn Volume RMB T',data:[98,142,188,234,286,342],color:'#c44be8'}
+        ]},
+        {title:'Wealth Management AUM',subtitle:'RMB trillions',type:'line',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'WM AUM RMB T',data:[2.8,3.4,3.8,4.2,4.8,5.4],color:'#4be88a'}
+        ]}
+      ],
+      'Capital Adequacy':[
+        {title:'CET1 Capital Ratio',subtitle:'% (regulatory minimum 5%)',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'CET1 %',data:[13.64,14.02,14.03,14.02,14.42,15.10],color:'#4be88a'}
+        ]},
+        {title:'Return on Equity (ROE)',subtitle:'%',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'ROE %',data:[13.1,11.9,12.4,12.1,11.5,11.2,11.0],color:'#e8b84b'}
+        ]},
+        {title:'Net Interest Margin',subtitle:'%',type:'line',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'NIM %',data:[2.19,2.13,2.02,1.97,1.75,1.68],color:'#e84b6a'}
+        ]}
+      ]
+    },
+    insights:[
+      {label:'Total Assets',value:'RMB 40T',desc:'Second largest bank in China — total assets of RMB 40 trillion (~US$5.5T)',trend:'↑ growing 8% annually',trendDir:'up'},
+      {label:'Mortgage Book',value:'28% of Loans',desc:'CCB is China\'s #1 mortgage lender — home loan book of RMB 7.8T',trend:'→ stabilizing after property sector stress',trendDir:'flat'},
+      {label:'Dividend Payout Floor',value:'30%',desc:'Government policy mandates minimum 30% payout ratio for major SOE banks',trend:'↑ likely to rise to 35% by 2027',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[830,810,790],fcf:[358,348,338]}
+  },
+
+  {
+    rank:4, code:'1398.HK', ticker:'1398', nameEn:'ICBC', nameZh:'工商銀行', sector:'Banking', type:'SOE · H-Share',
+    yield:7.6, price:5.88, mktCap:'HK$2.09T', divAnnual:0.365, payoutRatio:30, currency:'HKD',
+    revenue:900, ebitda:0, fcf:0, debt:0, pe:5.4,
+    desc:'ICBC — Industrial and Commercial Bank of China — is the world\'s largest bank by total assets, with RMB 46 trillion under management and 700 million retail banking customers. ICBC operates in 40+ countries and is China\'s most profitable bank.',
+    tabs:['Financial','Global Network','Retail Banking'],
+    charts:{
+      'Financial':[
+        {title:'Net Profit Trend',subtitle:'RMB billions',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Net Profit RMB B',data:[312,317,348,360,366,368,375],color:'#4be88a'}
+        ]},
+        {title:'Revenue Breakdown',subtitle:'RMB billions',type:'bar',wide:false,stacked:true,labels:['2022','2023','2024','2025'],datasets:[
+          {label:'Net Interest Income',data:[730,748,752,760],color:'#e8b84b'},
+          {label:'Fee Income',data:[142,138,134,138],color:'#4b9ee8'},
+          {label:'Other Non-Int.',data:[58,62,68,72],color:'#4be88a'}
+        ]},
+        {title:'DPS History (RMB)',subtitle:'Annual dividend per share (H-share)',type:'bar',wide:true,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'DPS (RMB)',data:[0.2888,0.2748,0.3055,0.3155,0.3165,0.3480,0.3650],color:'#e8b84b'}
+        ]}
+      ],
+      'Global Network':[
+        {title:'Overseas Branches & Subsidiaries',subtitle:'Number of institutions (ex-China)',type:'bar',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Overseas Institutions',data:[408,418,422,430,434,438,442],color:'#4b9ee8'}
+        ]},
+        {title:'Cross-Border RMB Settlement Volume',subtitle:'RMB trillions per year',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'RMB Settlement RMB T',data:[28,36,46,58,72,89],color:'#e8b84b'}
+        ]},
+        {title:'Overseas Assets',subtitle:'RMB trillions',type:'line',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Overseas Assets RMB T',data:[4.2,4.6,5.1,5.6,6.0,6.5],color:'#c44be8'}
+        ]}
+      ],
+      'Retail Banking':[
+        {title:'Personal Banking Customers',subtitle:'Millions of retail customers',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Retail Customers (M)',data:[654,668,680,692,700,712],color:'#e8b84b'}
+        ]},
+        {title:'Digital Customers & Transactions',subtitle:'Millions of app MAU',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'App MAU (M)',data:[182,236,294,352,408,464],color:'#4b9ee8'}
+        ]},
+        {title:'Personal Wealth Management AUM',subtitle:'RMB trillions',type:'line',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Retail WM AUM (RMB T)',data:[3.8,4.6,5.2,5.8,6.4,7.0],color:'#4be88a'}
+        ]}
+      ]
+    },
+    insights:[
+      {label:'Largest Bank',value:'#1 World',desc:'World\'s largest bank by total assets — RMB 46 trillion (~US$6.4 trillion)',trend:'↑ assets growing 7% annually',trendDir:'up'},
+      {label:'H-Share Discount',value:'~35%',desc:'ICBC H-shares trade at ~35% discount to A-shares and ~0.65× book — structural China discount',trend:'→ narrowing gradually',trendDir:'flat'},
+      {label:'RMB Internationalization',value:'#1 RMB Bank',desc:'ICBC clears more cross-border RMB than any other institution globally',trend:'↑ volumes +24% YoY',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[900,870,848],fcf:[375,368,360]}
+  },
+
+  {
+    rank:5, code:'3988.HK', ticker:'3988', nameEn:'Bank of China', nameZh:'中國銀行', sector:'Banking', type:'SOE · H-Share',
+    yield:7.4, price:5.12, mktCap:'HK$1.45T', divAnnual:0.246, payoutRatio:30, currency:'HKD',
+    revenue:580, ebitda:0, fcf:0, debt:0, pe:4.8,
+    desc:'Bank of China is China\'s most internationally focused major bank, with the broadest overseas network of any Chinese bank. BOC Group covers commercial banking, investment banking (BOC International), insurance (BOCG Insurance), and aviation leasing (BOC Aviation).',
+    tabs:['Financial','International Operations','BOC Aviation'],
+    charts:{
+      'Financial':[
+        {title:'Net Profit',subtitle:'RMB billions',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Net Profit RMB B',data:[187,190,216,227,238,248,255],color:'#4be88a'}
+        ]},
+        {title:'Loan Mix',subtitle:'% by category (2025)',type:'bar',wide:false,labels:['Corporate Loans','Mortgage','Personal','Trade Finance','Overseas','Other'],datasets:[
+          {label:'% of Loans',data:[42,22,11,8,12,5],color:'#e8b84b'}
+        ]},
+        {title:'NIM vs Peers',subtitle:'Net Interest Margin %',type:'line',wide:true,labels:['2021','2022','2023','2024','2025'],datasets:[
+          {label:'Bank of China',data:[1.75,1.76,1.69,1.61,1.57],color:'#e8b84b'},
+          {label:'CCB',data:[2.13,2.02,1.97,1.75,1.68],color:'#4b9ee8'},
+          {label:'ICBC',data:[2.10,1.97,1.91,1.76,1.70],color:'#4be88a'}
+        ]}
+      ],
+      'International Operations':[
+        {title:'Overseas Revenue Contribution',subtitle:'% of group profit before tax',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Overseas PBT %',data:[26.8,25.4,24.2,23.6,22.8,22.2,21.8],color:'#4b9ee8'}
+        ]},
+        {title:'Overseas Branches by Region',subtitle:'Number of institutions (2025)',type:'bar',wide:false,labels:['Asia-Pacific','Americas','Europe','Middle East','Africa'],datasets:[
+          {label:'Institutions',data:[428,88,96,42,24],color:'#e8b84b'}
+        ]},
+        {title:'Overseas Assets',subtitle:'RMB trillions',type:'line',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Overseas Assets RMB T',data:[6.8,7.4,8.0,8.6,9.2,9.8],color:'#c44be8'}
+        ]}
+      ],
+      'BOC Aviation':[
+        {title:'Fleet Size (BOC Aviation)',subtitle:'Number of aircraft owned/managed',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Fleet Size',data:[548,494,498,548,614,678,728],color:'#e8b84b'}
+        ]},
+        {title:'BOC Aviation Revenue',subtitle:'USD millions',type:'bar',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Revenue USD M',data:[2020,2018,2224,2688,2982,3240],color:'#4b9ee8'}
+        ]},
+        {title:'Aircraft Utilization Rate',subtitle:'% (time aircraft on lease vs fleet)',type:'line',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Utilization %',data:[98.2,97.5,97.8,98.4,99.1,99.3],color:'#4be88a'}
+        ]}
+      ]
+    },
+    insights:[
+      {label:'Overseas Network',value:'62 countries',desc:'Widest international footprint of any Chinese bank — 62 countries and 600+ institutions',trend:'↑ expanding in Belt & Road markets',trendDir:'up'},
+      {label:'BOC Aviation Fleet',value:'728 aircraft',desc:'BOC Aviation is one of the world\'s top 5 aircraft lessors — a growing non-bank revenue stream',trend:'↑ expanding post-COVID',trendDir:'up'},
+      {label:'H-Share Yield Premium',value:'vs A-Shares +3%',desc:'H-shares yield ~3% more than A-shares due to structural discount — opportunity for yield investors',trend:'→ persistent structural gap',trendDir:'flat'}
+    ],
+    comparableMetrics:{revenue:[580,562,546],fcf:[255,248,238]}
+  },
+
+  {
+    rank:6, code:'0005.HK', ticker:'5', nameEn:'HSBC Holdings', nameZh:'滙豐控股', sector:'Banking', type:'UK-Incorporated · Primary HK Listing',
+    yield:6.8, price:98.20, mktCap:'HK$1.87T', divAnnual:0.87, payoutRatio:52, currency:'USD',
+    revenue:65.8, ebitda:0, fcf:0, debt:0, pe:8.8,
+    desc:'HSBC is one of the world\'s largest banks, headquartered in London but with ~70% of profits from Asia (primarily Hong Kong, mainland China, and Southeast Asia). After restructuring, HSBC has refocused on Asia, disposed of Canadian and US retail banking, and resumed aggressive buybacks and dividends.',
+    tabs:['Financial','Asia Pivot','Wealth Management','Buybacks & Capital'],
+    charts:{
+      'Financial':[
+        {title:'Revenue by Geography',subtitle:'USD billions',type:'bar',wide:false,stacked:true,labels:['2022','2023','2024','2025'],datasets:[
+          {label:'Hong Kong',data:[16.8,20.2,22.4,23.8],color:'#e8b84b'},
+          {label:'Asia ex-HK',data:[9.4,11.2,12.8,14.1],color:'#4b9ee8'},
+          {label:'UK & Europe',data:[8.2,10.8,11.4,12.2],color:'#4be88a'},
+          {label:'Americas & Other',data:[6.8,8.4,8.2,8.6],color:'#e84b6a'}
+        ]},
+        {title:'Adj. Profit Before Tax',subtitle:'USD billions',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Adj. PBT USD B',data:[8.8,18.9,25.7,34.1,32.3,33.8],color:'#4be88a'}
+        ]},
+        {title:'Quarterly Dividends + Buybacks',subtitle:'USD billions returned to shareholders per year',type:'bar',wide:true,stacked:true,labels:['2022','2023','2024','2025'],datasets:[
+          {label:'Dividends',data:[7.0,13.2,15.5,17.2],color:'#e8b84b'},
+          {label:'Share Buybacks',data:[2.0,7.0,9.0,11.4],color:'#4b9ee8'}
+        ]}
+      ],
+      'Asia Pivot':[
+        {title:'Asia Revenue as % of Group',subtitle:'% of adjusted revenue',type:'line',wide:false,labels:['2018','2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Asia Revenue %',data:[51,54,59,62,65,68,71,73],color:'#e8b84b'}
+        ]},
+        {title:'China Mainland Loan Book',subtitle:'USD billions',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'China Loans USD B',data:[42,48,50,51,53,56],color:'#4b9ee8'}
+        ]},
+        {title:'Trade Finance Volume Asia',subtitle:'USD billions processed per year',type:'line',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Asia Trade Finance USD B',data:[488,542,618,672,728,784],color:'#4be88a'}
+        ]}
+      ],
+      'Wealth Management':[
+        {title:'Global Private Banking AUM',subtitle:'USD billions',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Private Banking AUM USD B',data:[318,388,362,394,428,468],color:'#c44be8'}
+        ]},
+        {title:'Global Wealth & Personal Banking Revenue',subtitle:'USD billions',type:'bar',wide:false,labels:['2022','2023','2024','2025'],datasets:[
+          {label:'WPB Revenue USD B',data:[18.6,21.4,24.8,26.4],color:'#e8b84b'}
+        ]},
+        {title:'Hang Seng Bank Contribution',subtitle:'HSBC group\'s 62.1% stake in HSB — profit contribution USD billions',type:'line',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'HSB Contribution USD B',data:[1.2,1.8,2.4,3.1,3.4,3.6],color:'#4be88a'}
+        ]}
+      ],
+      'Buybacks & Capital':[
+        {title:'Cumulative Share Buyback',subtitle:'USD billions',type:'line',wide:false,labels:['2022','2023','2024','2025'],datasets:[
+          {label:'Cumulative Buyback USD B',data:[2.0,9.0,18.0,29.4],color:'#4b9ee8'}
+        ]},
+        {title:'CET1 Capital Ratio',subtitle:'%',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'CET1 %',data:[15.9,15.8,14.2,14.8,14.9,15.0],color:'#4be88a'}
+        ]},
+        {title:'DPS Quarterly (USD cents)',subtitle:'Quarterly dividend per share in USD cents',type:'bar',wide:true,labels:['Q1 23','Q2 23','Q3 23','Q4 23','Q1 24','Q2 24','Q3 24','Q4 24','Q1 25','Q2 25','Q3 25','Q4 25'],datasets:[
+          {label:'Quarterly DPS (USD¢)',data:[10,10,10,31,10,10,10,36,10,10,10,37],color:'#e8b84b'}
+        ]}
+      ]
+    },
+    insights:[
+      {label:'Asia Profit',value:'~73%',desc:'~73% of HSBC revenue now from Asia — the Asia pivot strategy is bearing fruit',trend:'↑ rising share each year',trendDir:'up'},
+      {label:'Buyback Total',value:'$29.4B',desc:'HSBC has bought back $29.4B of shares since 2022 — dramatically reducing share count',trend:'↑ $11.4B in 2025 alone',trendDir:'up'},
+      {label:'Hong Kong Franchise',value:'#1 HK Bank',desc:'HSBC has been the dominant bank in Hong Kong for 160 years — still #1 by deposits',trend:'→ structurally stable',trendDir:'flat'}
+    ],
+    comparableMetrics:{revenue:[65.8,67.0,66.1],fcf:[17.2,15.5,13.2]}
+  },
+
+  {
+    rank:7, code:'0762.HK', ticker:'762', nameEn:'China Unicom', nameZh:'中國聯通', sector:'Telecom', type:'SOE · H-Share',
+    yield:6.8, price:12.10, mktCap:'HK$356B', divAnnual:0.412, payoutRatio:38, currency:'HKD',
+    revenue:388, ebitda:128, fcf:62, debt:88, pe:12.4,
+    desc:'China Unicom is China\'s third-largest telecom operator, with 330 million mobile subscribers and 100 million broadband users. Unicom\'s differentiation is its strategic technology partnership with Alibaba, Tencent, Baidu, and JD.com as minority shareholders, and its focus on enterprise cloud and IoT.',
+    tabs:['Financial','5G Network','Enterprise & Cloud','IoT & ABCDE Strategy'],
+    charts:{
+      'Financial':[
+        {title:'Revenue & Net Profit',subtitle:'RMB billions',type:'bar',wide:false,labels:['2021','2022','2023','2024','2025'],datasets:[
+          {label:'Revenue',data:[332,355,374,388,398],color:'#e8b84b'},
+          {label:'Net Profit',data:[7.3,8.8,12.1,16.4,21.8],color:'#4be88a'}
+        ]},
+        {title:'EBITDA & EBITDA Margin',subtitle:'RMB billions and %',type:'line',wide:false,labels:['2021','2022','2023','2024','2025'],datasets:[
+          {label:'EBITDA RMB B',data:[104,112,121,128,136],color:'#e8b84b'},
+          {label:'EBITDA Margin %',data:[31.3,31.5,32.4,33.0,34.2],color:'#4b9ee8'}
+        ]},
+        {title:'Dividend per Share (HKD)',subtitle:'Annual DPS',type:'bar',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'DPS (HKD)',data:[0.156,0.189,0.241,0.319,0.388,0.412],color:'#e8b84b'}
+        ]}
+      ],
+      '5G Network':[
+        {title:'5G Base Stations (Unicom+Telecom Shared)',subtitle:'Millions of shared base stations',type:'line',wide:false,labels:['Q4 20','Q2 21','Q4 21','Q2 22','Q4 22','Q2 23','Q4 23','Q2 24','Q4 24'],datasets:[
+          {label:'Shared 5G gNB (M)',data:[0.33,0.52,0.72,0.92,1.11,1.26,1.44,1.60,1.74],color:'#4be88a'}
+        ]},
+        {title:'5G Subscribers',subtitle:'Millions of 5G package subscribers',type:'line',wide:false,labels:['2021','2022','2023','2024','2025'],datasets:[
+          {label:'5G Subs (M)',data:[142,196,248,290,325],color:'#e8b84b'}
+        ]},
+        {title:'Network Capex (Shared Infrastructure)',subtitle:'RMB billions — shared infra reduces cost vs Solo build',type:'bar',wide:true,labels:['2021','2022','2023','2024','2025'],datasets:[
+          {label:'Total Capex RMB B',data:[68.4,72.8,71.2,68.8,66.4],color:'#4b9ee8'}
+        ]}
+      ],
+      'Enterprise & Cloud':[
+        {title:'Industry & Cloud Revenue',subtitle:'RMB billions',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Enterprise/Cloud RMB B',data:[22.8,38.2,62.4,88.8,116.4,148.2],color:'#4be88a'}
+        ]},
+        {title:'Government & Enterprise Clients',subtitle:'Thousands of signed enterprise contracts',type:'bar',wide:false,labels:['2021','2022','2023','2024','2025'],datasets:[
+          {label:'Enterprise Contracts (K)',data:[184,248,312,388,468],color:'#e8b84b'}
+        ]},
+        {title:'Cloud Revenue Market Share vs Peers',subtitle:'% of China enterprise telecom cloud market',type:'bar',wide:true,labels:['China Telecom Cloud','China Mobile Cloud','China Unicom Cloud','Alibaba','Huawei Cloud'],datasets:[
+          {label:'Market Share %',data:[28,24,18,22,8],color:'#e8b84b'}
+        ]}
+      ],
+      'IoT & ABCDE Strategy':[
+        {title:'IoT Connections',subtitle:'Millions of M2M/IoT connections managed',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'IoT Connections (M)',data:[384,448,512,578,648,712],color:'#c44be8'}
+        ]},
+        {title:'Fixed Broadband Subscribers',subtitle:'Millions',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Broadband Subs (M)',data:[84,88,92,96,100,104],color:'#4b9ee8'}
+        ]},
+        {title:'Strategic Internet Partners Stake Value',subtitle:'Market value of Alibaba/Tencent/Baidu stakes in Unicom (HKD billions)',type:'bar',wide:true,labels:['2018','2019','2020','2021','2022','2023','2024'],datasets:[
+          {label:'Partner Stake Value HKD B',data:[128,114,98,142,86,124,162],color:'#e8874b'}
+        ]}
+      ]
+    },
+    insights:[
+      {label:'Enterprise Cloud',value:'+27% YoY',desc:'Industrial internet and cloud revenue growing 27% annually — fastest segment',trend:'↑ targeting RMB 200B by 2027',trendDir:'up'},
+      {label:'Shared 5G Network',value:'Cost -30%',desc:'Network sharing with China Telecom saves ~30% on 5G capex vs standalone build',trend:'↑ structural cost advantage',trendDir:'up'},
+      {label:'Tech Partners',value:'BATT Holdings',desc:'Baidu, Alibaba, Tencent, and Toutiao hold ~10% of Unicom — unique alignment with tech giants',trend:'→ strategic partnerships active',trendDir:'flat'}
+    ],
+    comparableMetrics:{revenue:[388,388,374],fcf:[62,58,52],capex:[68.8,68.8,71.2]}
+  },
+
+  {
+    rank:8, code:'0002.HK', ticker:'2', nameEn:'CLP Holdings', nameZh:'中電控股', sector:'Utilities', type:'Hong Kong Blue Chip',
+    yield:4.8, price:68.20, mktCap:'HK$178B', divAnnual:3.10, payoutRatio:70, currency:'HKD',
+    revenue:92.4, ebitda:21.2, fcf:8.4, debt:52.8, pe:18.4,
+    desc:'CLP Holdings is Hong Kong\'s largest power utility, supplying electricity to 80% of Hong Kong (Kowloon and New Territories). CLP also operates major generation assets in Australia (EnergyAustralia), India (Jhajjar power), mainland China, and Southeast Asia. The company has increased its dividend every year since 1975.',
+    tabs:['Financial','Hong Kong Operations','Renewables Transition','Australia EnergyAustralia'],
+    charts:{
+      'Financial':[
+        {title:'Revenue by Geography',subtitle:'HKD billions',type:'bar',wide:false,stacked:true,labels:['2021','2022','2023','2024','2025'],datasets:[
+          {label:'Hong Kong',data:[34.2,38.1,40.4,42.8,44.6],color:'#e8b84b'},
+          {label:'Australia',data:[36.8,42.1,38.6,40.2,38.8],color:'#4b9ee8'},
+          {label:'India & Mainland',data:[7.8,8.4,8.6,8.8,9.0],color:'#4be88a'}
+        ]},
+        {title:'Earnings per Share (HKD)',subtitle:'HKD per share — total earnings',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'EPS HKD',data:[4.84,4.28,3.98,5.12,4.28,4.84,4.40],color:'#4be88a'}
+        ]},
+        {title:'Dividend Growth (50-Year Record)',subtitle:'HKD annual DPS',type:'line',wide:true,labels:['2000','2005','2010','2015','2018','2020','2022','2024','2025'],datasets:[
+          {label:'DPS HKD',data:[1.28,1.52,2.08,2.30,2.72,2.86,2.98,3.08,3.10],color:'#e8b84b'}
+        ]}
+      ],
+      'Hong Kong Operations':[
+        {title:'HK Electricity Sales Volume',subtitle:'Terawatt-hours (TWh) sold to customers',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'TWh Sold',data:[30.4,29.1,30.8,31.4,31.6,31.8,32.0],color:'#e8b84b'}
+        ]},
+        {title:'HK Generation Mix',subtitle:'% of electricity generated by fuel type (2025)',type:'bar',wide:false,labels:['Natural Gas','Nuclear (import)','Renewable/Other','Coal'],datasets:[
+          {label:'% Generation Mix',data:[48,29,16,7],color:'#e8b84b'}
+        ]},
+        {title:'Grid Reliability (SAIDI)',subtitle:'System Average Interruption Duration Index — minutes per customer per year',type:'line',wide:true,labels:['2019','2020','2021','2022','2023','2024'],datasets:[
+          {label:'SAIDI (min)',data:[0.8,0.6,0.7,0.5,0.4,0.5],color:'#4be88a'}
+        ]}
+      ],
+      'Renewables Transition':[
+        {title:'Renewable Capacity (Owned + Share)',subtitle:'Gigawatts',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025','2030T'],datasets:[
+          {label:'Renewable GW',data:[3.8,4.4,5.0,5.8,6.6,7.4,10.0],color:'#4be88a'}
+        ]},
+        {title:'Carbon Intensity of Generation',subtitle:'kg CO2e per MWh sent out',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Carbon Intensity',data:[0.62,0.56,0.52,0.48,0.44,0.40,0.36],color:'#4be88a'}
+        ]},
+        {title:'Clean Energy Capex Plan',subtitle:'HKD billions invested in clean energy per year',type:'bar',wide:true,labels:['2022','2023','2024','2025','2026E','2027E'],datasets:[
+          {label:'Clean Energy Capex HKD B',data:[2.8,3.4,4.2,5.0,5.8,6.4],color:'#4b9ee8'}
+        ]}
+      ],
+      'Australia EnergyAustralia':[
+        {title:'EnergyAustralia Customer Accounts',subtitle:'Millions of electricity and gas customer accounts',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Customers (M)',data:[2.5,2.4,2.3,2.2,2.0,1.9,1.8],color:'#e84b6a'}
+        ]},
+        {title:'Mount Piper & Yallourn Transition',subtitle:'Generation capacity (MW) from coal plants being transitioned',type:'bar',wide:false,labels:['2022','2023','2024','2025','2026E'],datasets:[
+          {label:'Coal Capacity MW (remaining)',data:[2880,2880,2880,2080,1480],color:'#e84b6a'}
+        ]},
+        {title:'Battery Storage Capacity (Australia)',subtitle:'MW of BESS deployed',type:'bar',wide:true,labels:['2022','2023','2024','2025','2026E'],datasets:[
+          {label:'BESS MW (Australia)',data:[0,0,350,700,1200],color:'#4be88a'}
+        ]}
+      ]
+    },
+    insights:[
+      {label:'Div Streak',value:'50+ years',desc:'CLP has paid an increased dividend every year since 1975 — one of Asia\'s longest growth streaks',trend:'↑ 50+ consecutive increases',trendDir:'up'},
+      {label:'HK Grid Reliability',value:'SAIDI 0.5 min',desc:'One of the world\'s most reliable grids — less than 30 seconds of outage per customer per year',trend:'→ world-class benchmark',trendDir:'flat'},
+      {label:'Clean Energy %',value:'45% by 2030',desc:'Targeting 45% clean energy in HK generation mix by 2030 — nuclear imports + offshore wind',trend:'↑ on track',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[92.4,91.8,87.6],fcf:[8.4,7.8,7.2],capex:[12.4,11.8,10.8]}
+  },
+
+  {
+    rank:9, code:'0011.HK', ticker:'11', nameEn:'Hang Seng Bank', nameZh:'恒生銀行', sector:'Banking', type:'Hong Kong Blue Chip',
+    yield:6.2, price:138.40, mktCap:'HK$264B', divAnnual:8.50, payoutRatio:80, currency:'HKD',
+    revenue:28.4, ebitda:0, fcf:0, debt:0, pe:13.4,
+    desc:'Hang Seng Bank is HSBC\'s 62.1%-owned Hong Kong subsidiary and one of Hong Kong\'s most iconic financial institutions. Founded in 1933, HSB\'s flagship Hang Seng Index (launched 1969) tracks Hong Kong blue chips and is one of the world\'s most followed financial benchmarks.',
+    tabs:['Financial','HK Business','Hang Seng Index'],
+    charts:{
+      'Financial':[
+        {title:'Net Interest & Fee Income',subtitle:'HKD billions',type:'bar',wide:false,labels:['2021','2022','2023','2024','2025'],datasets:[
+          {label:'Net Interest Income',data:[13.8,16.2,22.4,24.8,24.2],color:'#e8b84b'},
+          {label:'Fee & Commission',data:[5.2,4.8,5.1,5.4,5.6],color:'#4b9ee8'}
+        ]},
+        {title:'Profit Attributable to Shareholders',subtitle:'HKD billions',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Profit HKD B',data:[22.1,14.8,14.6,17.1,26.4,23.4,22.0],color:'#4be88a'}
+        ]},
+        {title:'DPS (HKD)',subtitle:'Annual dividend per share',type:'bar',wide:true,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'DPS HKD',data:[7.70,5.90,5.50,5.30,8.00,8.50,8.50],color:'#e8b84b'}
+        ]}
+      ],
+      'HK Business':[
+        {title:'Mortgage Market Share (HK)',subtitle:'% of outstanding mortgage loans in HK',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'HK Mortgage Share %',data:[20.4,21.2,21.8,21.4,20.8,20.4,20.0],color:'#e8b84b'}
+        ]},
+        {title:'Wealth Management Revenue',subtitle:'HKD billions',type:'line',wide:false,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'WM Revenue HKD B',data:[3.8,4.4,3.8,4.8,5.4,5.8],color:'#c44be8'}
+        ]},
+        {title:'HK Property Loan NPL Ratio',subtitle:'%',type:'line',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Property NPL %',data:[0.12,0.14,0.18,0.28,0.42,0.38],color:'#e84b6a'}
+        ]}
+      ],
+      'Hang Seng Index':[
+        {title:'Hang Seng Index Level',subtitle:'Year-end close',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'HSI Year-End',data:[28189,27231,23398,19781,17047,19624,24174],color:'#e8b84b'}
+        ]},
+        {title:'HSI Constituents by Sector',subtitle:'Number of stocks by sector (2025)',type:'bar',wide:false,labels:['Finance','IT','Consumer','Industrials','Properties','Energy','Utilities'],datasets:[
+          {label:'# Constituents',data:[12,10,9,8,7,5,4],color:'#e8b84b'}
+        ]},
+        {title:'HSI vs Hang Seng Tech Index',subtitle:'Index performance (2019=100)',type:'line',wide:true,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'HSI',data:[100,96.6,83.0,70.1,60.5,69.6,85.7],color:'#e8b84b'},
+          {label:'HS Tech',data:[100,148,88,48,52,74,96],color:'#4b9ee8'}
+        ]}
+      ]
+    },
+    insights:[
+      {label:'Div Payout',value:'~80%',desc:'Hang Seng Bank typically pays 70-85% of earnings as dividends — income-maximizing payout policy',trend:'→ stable high payout',trendDir:'up'},
+      {label:'HK Mortgage Share',value:'#1 or #2',desc:'Consistently one of Hong Kong\'s top two mortgage lenders by outstanding balance',trend:'→ 20% market share',trendDir:'flat'},
+      {label:'HSI Licensing',value:'Global Benchmark',desc:'The Hang Seng Index is licensed to hundreds of ETFs and derivatives globally — fee income from the world\'s most-watched Asian benchmark',trend:'↑ index products growing',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[28.4,29.8,28.6],fcf:[22.0,23.4,26.4]}
+  },
+
+  {
+    rank:10, code:'0001.HK', ticker:'1', nameEn:'CK Hutchison Holdings', nameZh:'長和', sector:'Conglomerate', type:'Hong Kong Blue Chip',
+    yield:5.8, price:42.80, mktCap:'HK$178B', divAnnual:2.37, payoutRatio:42, currency:'HKD',
+    revenue:428, ebitda:72, fcf:38, debt:182, pe:7.2,
+    desc:'CK Hutchison is the flagship Li Ka-shing conglomerate with global operations in ports, retail (AS Watson), infrastructure, energy (Husky), and telecommunications across 50+ countries. The group is restructuring its telecom assets via a potential merger of its European telecom businesses (Three UK, Drei Austria etc.) pending regulatory review.',
+    tabs:['Financial','Port Operations','AS Watson Retail','European Telecom'],
+    charts:{
+      'Financial':[
+        {title:'EBIT by Division',subtitle:'HKD billions',type:'bar',wide:false,stacked:true,labels:['2022','2023','2024','2025'],datasets:[
+          {label:'Ports & Related Services',data:[11.4,12.2,12.8,13.4],color:'#e8b84b'},
+          {label:'Retail (AS Watson)',data:[5.8,7.2,8.1,8.8],color:'#4b9ee8'},
+          {label:'Infrastructure',data:[14.2,14.8,15.4,16.0],color:'#4be88a'},
+          {label:'Telecom (Europe)',data:[5.4,5.8,6.1,6.4],color:'#e84b6a'},
+          {label:'Energy (Husky/CKI)',data:[8.6,9.1,9.4,9.8],color:'#c44be8'}
+        ]},
+        {title:'Dividend per Share (HKD)',subtitle:'Annual DPS',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'DPS HKD',data:[2.14,1.98,2.06,2.24,2.30,2.34,2.37],color:'#e8b84b'}
+        ]},
+        {title:'Recurring Free Cash Flow',subtitle:'HKD billions',type:'line',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Recurring FCF HKD B',data:[28,32,36,40,38,42],color:'#4be88a'}
+        ]}
+      ],
+      'Port Operations':[
+        {title:'Container Throughput',subtitle:'Million TEUs per year (HPH Trust + CKH)',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'TEUs (M)',data:[84,82,86,84,80,79,81],color:'#e8b84b'}
+        ]},
+        {title:'Key Port Market Share',subtitle:'% of throughput in major hub ports (2025)',type:'bar',wide:false,labels:['Hong Kong (HIT)','Yantian (Shenzhen)','Rotterdam (ECT)','Hamburg','Felixstowe (UK)'],datasets:[
+          {label:'Market Share %',data:[42,25,38,35,48],color:'#e8b84b'}
+        ]},
+        {title:'Ports Revenue by Region',subtitle:'HKD billions',type:'bar',wide:true,stacked:true,labels:['2022','2023','2024','2025'],datasets:[
+          {label:'Asia',data:[18.4,19.2,19.8,20.4],color:'#e8b84b'},
+          {label:'Europe',data:[12.8,13.4,13.8,14.2],color:'#4b9ee8'},
+          {label:'Americas',data:[8.4,8.8,9.2,9.6],color:'#4be88a'}
+        ]}
+      ],
+      'AS Watson Retail':[
+        {title:'Store Count Globally',subtitle:'Total retail stores across all AS Watson formats',type:'line',wide:false,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Total Stores',data:[15800,16000,16400,16800,17200,17600,17900],color:'#4b9ee8'}
+        ]},
+        {title:'Revenue by Brand Format',subtitle:'HKD billions (2025)',type:'bar',wide:false,labels:['Watsons','Superdrug','Kruidvat','PARKnSHOP','Rossmann(assoc.)','ICI Paris XL','Other'],datasets:[
+          {label:'Rev HKD B',data:[48.2,18.4,22.8,14.2,12.8,8.4,18.2],color:'#4b9ee8'}
+        ]},
+        {title:'Loyalty Program Members',subtitle:'Millions of active loyalty members globally',type:'line',wide:true,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+          {label:'Members (M)',data:[120,138,152,168,184,198,212],color:'#c44be8'}
+        ]}
+      ],
+      'European Telecom':[
+        {title:'European 5G Subscriber Count',subtitle:'Millions across Three UK, Drei AT, Three Ireland, Wind3 Italy etc.',type:'line',wide:false,labels:['2022','2023','2024','2025'],datasets:[
+          {label:'EU Telecom Subs (M)',data:[32,36,40,44],color:'#e84b6a'}
+        ]},
+        {title:'UK Three 5G Base Stations',subtitle:'Thousands of 5G NR sites in UK',type:'bar',wide:false,labels:['2022','2023','2024','2025'],datasets:[
+          {label:'UK 5G Sites (K)',data:[5.2,6.8,9.4,12.1],color:'#4b9ee8'}
+        ]},
+        {title:'EU Telecom Revenue by Country',subtitle:'HKD billions (2025)',type:'bar',wide:true,labels:['UK (Three)','Italy (Wind3)','Austria (Drei)','Sweden','Ireland','Denmark'],datasets:[
+          {label:'Revenue HKD B',data:[28.4,18.2,8.8,6.4,5.8,4.2],color:'#e84b6a'}
+        ]}
+      ]
+    },
+    insights:[
+      {label:'Port Network',value:'52 Countries',desc:'Hutchison Ports operates the world\'s most geographically diversified port network across 52 countries',trend:'→ stable volumes',trendDir:'flat'},
+      {label:'AS Watson Stores',value:'17,900',desc:'Largest health and beauty retailer in Asia-Pacific with 17,900+ stores worldwide',trend:'↑ +300 stores YoY',trendDir:'up'},
+      {label:'EU Telecom Merger',value:'$8.8B Deal',desc:'CKH/Veon merger of European 3/WIND telecom assets — creating top-5 EU operator pending regulatory approval',trend:'↑ significant value unlock',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[428,418,402],fcf:[38,36,34]}
+  },
+
+  {
+    rank:11, code:'0006.HK', ticker:'6', nameEn:'Power Assets Holdings', nameZh:'電能實業', sector:'Utilities', type:'Hong Kong Blue Chip',
+    yield:6.4, price:44.10, mktCap:'HK$84B', divAnnual:2.73, payoutRatio:78, currency:'HKD',
+    revenue:18.4, ebitda:14.2, fcf:12.8, debt:22.4, pe:12.4,
+    desc:'Power Assets Holdings is a global energy infrastructure company spun off from CLP, owning regulated utilities in Australia, UK, New Zealand, and Continental Europe. PAH\'s assets generate highly predictable dividend income and benefit from rising regulated asset bases as energy transition spending accelerates.',
+    tabs:['Financial','Global Utility Portfolio'],
+    charts:{Financial:[
+      {title:'Revenue by Region',subtitle:'HKD billions',type:'bar',wide:false,stacked:true,labels:['2022','2023','2024','2025'],datasets:[
+        {label:'Australia',data:[8.4,9.0,9.4,9.8],color:'#e8b84b'},
+        {label:'UK',data:[3.8,4.2,4.6,4.8],color:'#4b9ee8'},
+        {label:'New Zealand & Other',data:[2.8,3.0,3.2,3.8],color:'#4be88a'}
+      ]},
+      {title:'DPS History',subtitle:'HKD per share',type:'line',wide:true,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+        {label:'DPS HKD',data:[2.73,2.73,2.73,2.73,2.73,2.73,2.73],color:'#e8b84b'}
+      ]}
+    ]},
+    insights:[
+      {label:'Dividend Stability',value:'HKD 2.73/yr',desc:'PAH has maintained HKD 2.73 DPS unchanged for 10+ years — epitome of stable income stock',trend:'→ flat, predictable',trendDir:'flat'},
+      {label:'RAB Growth',value:'+8%/yr',desc:'Regulated Asset Base growing 8% annually across UK/Australia grids as energy transition capex accelerates',trend:'↑ earnings power building',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[18.4,17.8,17.2],fcf:[12.8,12.4,11.8]}
+  },
+
+  {
+    rank:12, code:'1038.HK', ticker:'1038', nameEn:'CK Infrastructure Holdings', nameZh:'長江基建', sector:'Utilities', type:'Hong Kong Blue Chip',
+    yield:5.2, price:52.40, mktCap:'HK$126B', divAnnual:2.60, payoutRatio:60, currency:'HKD',
+    revenue:24.8, ebitda:18.4, fcf:14.2, debt:48.4, pe:11.8,
+    desc:'CK Infrastructure is one of the world\'s largest infrastructure companies, with regulated assets in power, gas, water, waste, and transportation across Australia, UK, Europe, New Zealand, Canada, and Hong Kong.',
+    tabs:['Financial','Global Infrastructure Assets'],
+    charts:{Financial:[
+      {title:'Recurring EBITDA by Region',subtitle:'HKD billions',type:'bar',wide:false,stacked:true,labels:['2022','2023','2024','2025'],datasets:[
+        {label:'Australia',data:[8.4,8.8,9.2,9.8],color:'#e8b84b'},
+        {label:'UK',data:[5.8,6.2,6.4,6.8],color:'#4b9ee8'},
+        {label:'Europe & Other',data:[2.4,2.6,2.8,3.0],color:'#4be88a'}
+      ]},
+      {title:'DPS Growth',subtitle:'HKD per share',type:'line',wide:true,labels:['2015','2017','2019','2021','2023','2025'],datasets:[
+        {label:'DPS HKD',data:[1.81,2.00,2.18,2.34,2.50,2.60],color:'#e8b84b'}
+      ]}
+    ]},
+    insights:[
+      {label:'RAB Assets',value:'HKD 120B+',desc:'Regulated asset base across 10 countries providing highly predictable and growing earnings',trend:'↑ growing with capex',trendDir:'up'},
+      {label:'Div Growth',value:'10+ years',desc:'Consistent dividend growth streak backed by regulated cash flows — never cut dividend',trend:'↑ +4.0% avg growth',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[24.8,24.0,22.8],fcf:[14.2,13.4,12.8]}
+  },
+
+  {
+    rank:13, code:'2388.HK', ticker:'2388', nameEn:'BOC Hong Kong', nameZh:'中銀香港', sector:'Banking', type:'H-Share',
+    yield:7.4, price:28.60, mktCap:'HK$280B', divAnnual:1.908, payoutRatio:68, currency:'HKD',
+    revenue:38.4, ebitda:0, fcf:0, debt:0, pe:9.4,
+    desc:'BOC Hong Kong is the third largest banking group in Hong Kong and the Hong Kong subsidiary of Bank of China, serving 4+ million retail customers. BOCHK is the designated bank for clearing Renminbi in Hong Kong — a vital role as RMB internationalization accelerates through HK.',
+    tabs:['Financial','RMB Clearing Hub','Wealth Management'],
+    charts:{Financial:[
+      {title:'Net Interest Income & Fee Income',subtitle:'HKD billions',type:'bar',wide:false,labels:['2021','2022','2023','2024','2025'],datasets:[
+        {label:'Net Interest Income',data:[15.8,18.4,24.2,26.8,26.4],color:'#e8b84b'},
+        {label:'Fee Income',data:[5.8,6.2,6.4,6.8,7.0],color:'#4b9ee8'}
+      ]},
+      {title:'DPS (HKD)',subtitle:'Annual dividend per share',type:'line',wide:true,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+        {label:'DPS HKD',data:[1.455,1.182,1.272,1.512,1.804,1.908,1.908],color:'#e8b84b'}
+      ]}
+    ]},
+    insights:[
+      {label:'RMB Clearing',value:'#1 in HK',desc:'Designated RMB clearing bank in Hong Kong — processes the majority of offshore RMB transactions globally',trend:'↑ volumes +24% YoY',trendDir:'up'},
+      {label:'ASEAN Growth',value:'+18% rev',desc:'BOCHK is expanding rapidly into ASEAN via subsidiaries in Thailand, Vietnam, Malaysia — fastest growth region',trend:'↑ new profit driver',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[38.4,40.2,37.8],fcf:[18.4,19.8,18.2]}
+  },
+
+  {
+    rank:14, code:'0083.HK', ticker:'83', nameEn:'Sino Land', nameZh:'信和置業', sector:'Property', type:'Hong Kong Blue Chip',
+    yield:6.8, price:7.48, mktCap:'HK$36B', divAnnual:0.44, payoutRatio:62, currency:'HKD',
+    revenue:10.2, ebitda:4.8, fcf:3.4, debt:8.8, pe:9.2,
+    desc:'Sino Land is one of Hong Kong\'s premier property developers, specializing in luxury residential developments, commercial properties, and investment properties. The company has a particularly strong portfolio of hotels through Sino Hotels, and large-scale mixed-use developments in HK and mainland China.',
+    tabs:['Financial','HK Property Market','Hotel Portfolio'],
+    charts:{Financial:[
+      {title:'Revenue by Segment',subtitle:'HKD billions',type:'bar',wide:false,stacked:true,labels:['FY2022','FY2023','FY2024','FY2025'],datasets:[
+        {label:'Property Sales',data:[6.8,5.2,4.8,5.4],color:'#e8b84b'},
+        {label:'Rental Income',data:[2.1,2.4,2.6,2.8],color:'#4b9ee8'},
+        {label:'Hotels',data:[0.8,1.4,1.6,1.8],color:'#4be88a'}
+      ]},
+      {title:'HK Residential Price Index vs Sino Land Sales',subtitle:'Centaline HK Residential Price Index (2019=100)',type:'line',wide:true,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+        {label:'HK Res. Price Index',data:[100,96.2,104.8,104.2,86.4,78.8,82.4],color:'#e84b6a'},
+        {label:'Sino Land Dev. Rev (HKD B)',data:[8.4,7.2,9.8,6.8,5.2,4.8,5.4],color:'#e8b84b'}
+      ]}
+    ]},
+    insights:[
+      {label:'Land Bank',value:'HKD 28B+',desc:'Premium land bank in prime HK New Territories and Kowloon — hard asset base',trend:'→ selective land acquisitions',trendDir:'flat'},
+      {label:'Hotel Recovery',value:'+24%',desc:'Sino Hotels revenue +24% YoY as inbound tourism to HK recovers post-COVID border reopening',trend:'↑ strong momentum',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[10.2,9.8,10.8],fcf:[3.4,2.8,3.8]}
+  },
+
+  {
+    rank:15, code:'0012.HK', ticker:'12', nameEn:'Henderson Land Development', nameZh:'恒基地產', sector:'Property', type:'Hong Kong Blue Chip',
+    yield:5.8, price:18.20, mktCap:'HK$83B', divAnnual:0.98, payoutRatio:58, currency:'HKD',
+    revenue:24.8, ebitda:9.4, fcf:5.8, debt:48.4, pe:10.2,
+    desc:'Henderson Land is a major HK-listed property developer founded by Lee Shau-kee. The company develops premium residential and commercial properties in Hong Kong and mainland China, and holds significant investment in HK & China Gas (Towngas).',
+    tabs:['Financial','Towngas JV','Development Pipeline'],
+    charts:{Financial:[
+      {title:'Revenue & Profit',subtitle:'HKD billions',type:'bar',wide:false,labels:['FY2022','FY2023','FY2024','FY2025'],datasets:[
+        {label:'Revenue',data:[22.4,20.8,22.4,24.8],color:'#e8b84b'},
+        {label:'Net Profit',data:[7.8,6.4,7.1,8.0],color:'#4be88a'}
+      ]},
+      {title:'Towngas (0003.HK) Stake Value',subtitle:'Market value of Henderson\'s ~42% stake, HKD billions',type:'line',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+        {label:'Towngas Stake Value HKD B',data:[42,48,38,34,36,40],color:'#4b9ee8'}
+      ]}
+    ]},
+    insights:[
+      {label:'Towngas Stake',value:'~42%',desc:'Henderson holds ~42% of HK & China Gas (Towngas) — a regulated utility adding defensive income',trend:'→ stable income stream',trendDir:'flat'},
+      {label:'HK Land Bank',value:'HKD 80B+',desc:'Extensive urban redevelopment land bank in older HK districts — decades of development pipeline',trend:'→ gradual unlock',trendDir:'flat'}
+    ],
+    comparableMetrics:{revenue:[24.8,22.4,20.8],fcf:[5.8,5.2,4.8]}
+  },
+
+  {
+    rank:16, code:'0823.HK', ticker:'823', nameEn:'Link REIT', nameZh:'領展房產基金', sector:'REIT', type:'HK REIT',
+    yield:6.2, price:36.80, mktCap:'HK$82B', divAnnual:2.28, payoutRatio:96, currency:'HKD',
+    revenue:14.2, ebitda:10.8, fcf:8.4, debt:52.8, pe:22.4,
+    desc:'Link REIT is Asia\'s largest REIT by market cap, owning retail malls, car parks, and increasingly office/logistics properties across Hong Kong, mainland China, Singapore, and Australia. Originally built on HK Housing Authority retail podiums, Link has transformed into a diversified Pan-Asian REIT.',
+    tabs:['Financial','HK Retail Portfolio','International Expansion'],
+    charts:{Financial:[
+      {title:'Revenue by Geography',subtitle:'HKD billions',type:'bar',wide:false,stacked:true,labels:['FY2022','FY2023','FY2024','FY2025'],datasets:[
+        {label:'Hong Kong',data:[10.8,11.4,11.8,12.2],color:'#e8b84b'},
+        {label:'Mainland China',data:[1.2,1.4,1.4,1.2],color:'#4b9ee8'},
+        {label:'Singapore & Australia',data:[0.4,0.6,0.8,0.8],color:'#4be88a'}
+      ]},
+      {title:'DPU (Distribution per Unit) HKD',subtitle:'Annual total distribution per unit',type:'line',wide:true,labels:['FY2019','FY2020','FY2021','FY2022','FY2023','FY2024','FY2025'],datasets:[
+        {label:'DPU HKD',data:[2.7624,2.9120,2.6720,2.6440,2.4680,2.2800,2.2800],color:'#e8b84b'}
+      ]}
+    ]},
+    insights:[
+      {label:'Asia\'s Largest REIT',value:'HKD 82B mktcap',desc:'Largest REIT in Asia by market capitalization — unique scale advantage',trend:'↑ diversifying geographically',trendDir:'up'},
+      {label:'HK Retail Occupancy',value:'96.4%',desc:'Core HK retail portfolio maintains 96%+ occupancy — community malls serving essential needs',trend:'→ resilient through cycles',trendDir:'flat'},
+      {label:'Int\'l Revenue',value:'14% & growing',desc:'International assets (China, SG, AU) now 14% of revenue — targeting 25% by 2028',trend:'↑ active acquirer',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[14.2,14.0,13.6],fcf:[8.4,8.0,7.4]}
+  },
+
+  {
+    rank:17, code:'0003.HK', ticker:'3', nameEn:'HK & China Gas (Towngas)', nameZh:'香港中華煤氣', sector:'Utilities', type:'Hong Kong Blue Chip',
+    yield:5.4, price:6.42, mktCap:'HK$79B', divAnnual:0.322, payoutRatio:72, currency:'HKD',
+    revenue:28.4, ebitda:8.4, fcf:4.8, debt:34.8, pe:13.2,
+    desc:'Towngas is Hong Kong\'s monopoly piped gas utility, serving 1.9 million HK customers, and a major gas distribution business across 360+ mainland China cities. Towngas is also investing in green hydrogen and sustainable energy via its emerging Greener World initiative.',
+    tabs:['Financial','HK Gas Operations','Mainland China Gas'],
+    charts:{Financial:[
+      {title:'Revenue by Geography',subtitle:'HKD billions',type:'bar',wide:false,stacked:true,labels:['2022','2023','2024','2025'],datasets:[
+        {label:'Hong Kong',data:[12.4,13.2,13.8,14.2],color:'#e8b84b'},
+        {label:'Mainland China Gas',data:[10.8,11.4,11.8,11.8],color:'#4b9ee8'},
+        {label:'Energy/Other',data:[1.8,2.0,2.2,2.4],color:'#4be88a'}
+      ]},
+      {title:'Annual DPS (HKD)',subtitle:'',type:'line',wide:true,labels:['2018','2019','2020','2021','2022','2023','2024','2025'],datasets:[
+        {label:'DPS HKD',data:[0.307,0.311,0.316,0.319,0.321,0.322,0.322,0.322],color:'#e8b84b'}
+      ]}
+    ]},
+    insights:[
+      {label:'HK Gas Monopoly',value:'1.9M Customers',desc:'100% monopoly on piped gas in Hong Kong — irreplaceable infrastructure with regulated tariffs',trend:'→ highly stable',trendDir:'flat'},
+      {label:'China City Gas',value:'360+ cities',desc:'Operations in 360+ mainland cities — diversified revenue across China\'s growing urban gas market',trend:'↑ growing volume',trendDir:'up'},
+      {label:'Green Hydrogen',value:'New Initiative',desc:'Building Hong Kong\'s first green hydrogen production facility — early mover in hydrogen economy',trend:'↑ novel business line',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[28.4,27.8,27.0],fcf:[4.8,4.4,4.2]}
+  },
+
+  {
+    rank:18, code:'0386.HK', ticker:'386', nameEn:'Sinopec Corp', nameZh:'中石化', sector:'Energy', type:'SOE · H-Share',
+    yield:6.8, price:4.42, mktCap:'HK$529B', divAnnual:0.208, payoutRatio:68, currency:'HKD',
+    revenue:3028, ebitda:148, fcf:82, debt:184, pe:10.2,
+    desc:'Sinopec is China\'s largest oil refiner and petrochemical producer, and the world\'s largest refining company. Sinopec also operates China\'s largest retail fuel network with 30,000+ filling stations, and is transitioning into clean hydrogen and non-fuel retail.',
+    tabs:['Financial','Refining & Chemicals','Retail & EV Charging'],
+    charts:{Financial:[
+      {title:'Revenue by Segment',subtitle:'RMB billions',type:'bar',wide:false,stacked:true,labels:['2022','2023','2024','2025'],datasets:[
+        {label:'Refining',data:[1082,988,942,986],color:'#e8b84b'},
+        {label:'Chemical',data:[684,628,614,648],color:'#4b9ee8'},
+        {label:'Retail & Marketing',data:[1428,1368,1314,1358],color:'#4be88a'},
+        {label:'E&P',data:[72,68,72,76],color:'#e84b6a'}
+      ]},
+      {title:'DPS (HKD H-share)',subtitle:'Annual',type:'bar',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+        {label:'DPS HKD',data:[0.104,0.170,0.230,0.212,0.196,0.208],color:'#e8b84b'}
+      ]}
+    ]},
+    insights:[
+      {label:'Refining Capacity',value:'300Mt/yr',desc:'World\'s largest refining capacity — 300 million tonnes per year across 30+ refineries',trend:'→ stable, optimizing',trendDir:'flat'},
+      {label:'EV Charging Stations',value:'20,000+',desc:'Sinopec has deployed 20,000+ EV charging piles at filling stations — largest network in China',trend:'↑ targeting 100K by 2027',trendDir:'up'},
+      {label:'Hydrogen Stations',value:'100+ in China',desc:'China\'s largest hydrogen refueling network, operating 100+ hydrogen stations',trend:'↑ rapidly expanding',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[3028,3086,3114],fcf:[82,76,88],capex:[102,98,92]}
+  },
+
+  {
+    rank:19, code:'0857.HK', ticker:'857', nameEn:'PetroChina', nameZh:'中石油', sector:'Energy', type:'SOE · H-Share',
+    yield:6.4, price:7.08, mktCap:'HK$1.30T', divAnnual:0.312, payoutRatio:52, currency:'HKD',
+    revenue:2884, ebitda:488, fcf:218, debt:462, pe:8.4,
+    desc:'PetroChina is China\'s largest oil and gas producer, with world-scale upstream assets in the Tarim Basin, Sichuan (gas), and international operations across 36 countries. As China\'s largest natural gas distributor, PetroChina benefits from the structural shift from coal to gas in China\'s energy mix.',
+    tabs:['Financial','Upstream Production','Natural Gas Transition'],
+    charts:{Financial:[
+      {title:'Revenue by Business',subtitle:'RMB billions',type:'bar',wide:false,stacked:true,labels:['2022','2023','2024','2025'],datasets:[
+        {label:'E&P',data:[1028,982,962,988],color:'#e8b84b'},
+        {label:'Refining & Chemicals',data:[1424,1348,1312,1354],color:'#4b9ee8'},
+        {label:'Natural Gas & Pipeline',data:[482,512,542,572],color:'#4be88a'}
+      ]},
+      {title:'Natural Gas Production & Sales',subtitle:'Bcm per year (billion cubic meters)',type:'line',wide:true,labels:['2019','2020','2021','2022','2023','2024','2025'],datasets:[
+        {label:'Gas Production (Bcm)',data:[138,149,162,176,190,204,218],color:'#4be88a'},
+        {label:'Gas Sales (Bcm)',data:[214,238,264,288,312,336,358],color:'#e8b84b'}
+      ]}
+    ]},
+    insights:[
+      {label:'Gas Volume',value:'358 Bcm sold',desc:'PetroChina sells more natural gas than any company outside Russia — vital for China\'s coal-to-gas switch',trend:'↑ +7% YoY',trendDir:'up'},
+      {label:'Tarim Basin',value:'50Bcm target',desc:'Tarim Basin in Xinjiang targeting 50Bcm annual production by 2025 — China\'s largest gas field development',trend:'↑ on track',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[2884,2924,2954],fcf:[218,198,214],capex:[242,228,214]}
+  },
+
+  {
+    rank:20, code:'0267.HK', ticker:'267', nameEn:'CITIC Limited', nameZh:'中信股份', sector:'Conglomerate', type:'SOE · Red Chip',
+    yield:6.8, price:14.30, mktCap:'HK$207B', divAnnual:0.62, payoutRatio:28, currency:'HKD',
+    revenue:624, ebitda:148, fcf:62, debt:1480, pe:4.2,
+    desc:'CITIC Limited is China\'s largest conglomerate, with key businesses in financial services (CITIC Bank, CITIC Securities), resources (CITIC Pacific Mining), infrastructure, manufacturing, and real estate. CITIC is ~59% owned by the Chinese state, and is a primary vehicle for state capital deployment.',
+    tabs:['Financial','CITIC Bank','CITIC Securities'],
+    charts:{Financial:[
+      {title:'Revenue by Division',subtitle:'HKD billions',type:'bar',wide:false,stacked:true,labels:['2022','2023','2024','2025'],datasets:[
+        {label:'Financial Services',data:[288,304,318,328],color:'#e8b84b'},
+        {label:'Resources & Energy',data:[148,142,138,142],color:'#4b9ee8'},
+        {label:'Manufacturing',data:[88,94,98,102],color:'#4be88a'},
+        {label:'Real Estate & Other',data:[62,58,54,52],color:'#e84b6a'}
+      ]},
+      {title:'DPS History (HKD)',subtitle:'',type:'bar',wide:true,labels:['2020','2021','2022','2023','2024','2025'],datasets:[
+        {label:'DPS HKD',data:[0.40,0.48,0.56,0.58,0.60,0.62],color:'#e8b84b'}
+      ]}
+    ]},
+    insights:[
+      {label:'CITIC Bank',value:'Top 7 China Bank',desc:'CITIC Bank is China\'s 7th-largest bank by assets — key earnings driver with strong corporate banking',trend:'↑ profit growing',trendDir:'up'},
+      {label:'CITIC Securities',value:'Top 3 Broker',desc:'CITIC Securities is China\'s largest investment bank and top-3 brokerage by revenue',trend:'↑ market share growing',trendDir:'up'}
+    ],
+    comparableMetrics:{revenue:[624,614,598],fcf:[62,58,54]}
+  }
+];
+
+// Additional 30 companies — representative data
+const EXTRA = [
+  {rank:21,code:'0016.HK',ticker:'16',nameEn:'Sun Hung Kai Properties',nameZh:'新鴻基地產',sector:'Property',type:'HK Blue Chip',yield:5.2,price:76.80,mktCap:'HK$219B',divAnnual:3.70,payoutRatio:48,currency:'HKD',desc:'Hong Kong\'s largest property developer by market cap, known for premium residential developments and signature grade-A offices like IFC and ICC.',comparableMetrics:{revenue:[58.4,62.4,72.8],fcf:[14.2,16.4,18.8]}},
+  {rank:22,code:'0688.HK',ticker:'688',nameEn:'China Overseas Land & Investment',nameZh:'中海外',sector:'Property',type:'SOE · Red Chip',yield:8.2,price:11.20,mktCap:'HK$155B',divAnnual:0.82,payoutRatio:38,currency:'HKD',desc:'COLI is one of China\'s largest SOE property developers, with low leverage and high-quality land bank in 30+ cities. Benefiting from market consolidation post-Evergrande.',comparableMetrics:{revenue:[188,218,248],fcf:[28,34,42]}},
+  {rank:23,code:'0960.HK',ticker:'960',nameEn:'Longfor Group',nameZh:'龍湖集團',sector:'Property',type:'H-Share',yield:7.4,price:9.80,mktCap:'HK$69B',divAnnual:0.68,payoutRatio:28,currency:'HKD',desc:'Longfor is one of China\'s highest-quality private property developers, known for premium mall operations (Tianjie malls) and rental housing (Guanyu). Longfor has survived the property downturn with investment-grade credit.',comparableMetrics:{revenue:[188,218,248],fcf:[18,22,28]}},
+  {rank:24,code:'2318.HK',ticker:'2318',nameEn:'Ping An Insurance',nameZh:'中國平安',sector:'Insurance',type:'H-Share',yield:5.4,price:42.80,mktCap:'HK$782B',divAnnual:2.43,payoutRatio:34,currency:'HKD',desc:'China\'s largest insurer by premium and most valuable financial services brand. Ping An operates life, P&C, health insurance, banking (Ping An Bank), and fintech (Lufax, OneConnect).',comparableMetrics:{revenue:[888,972,1088],fcf:[88,102,118]}},
+  {rank:25,code:'1299.HK',ticker:'1299',nameEn:'AIA Group',nameZh:'友邦保險',sector:'Insurance',type:'HK Primary Listing',yield:4.2,price:58.40,mktCap:'HK$673B',divAnnual:2.16,payoutRatio:42,currency:'USD',desc:'AIA is the largest independent pan-Asian life insurer, operating in 18 markets with particular strength in mainland China, Thailand, Malaysia, Singapore, and Hong Kong.',comparableMetrics:{revenue:[14.8,15.4,16.2],fcf:[4.2,4.8,5.4]}},
+  {rank:26,code:'2628.HK',ticker:'2628',nameEn:'China Life Insurance',nameZh:'中國人壽',sector:'Insurance',type:'SOE · H-Share',yield:5.8,price:16.40,mktCap:'HK$464B',divAnnual:0.68,payoutRatio:42,currency:'HKD',desc:'China\'s largest life insurer by premium and assets, with 200M+ policies in force. CL dominates bancassurance and individual agent channels in rural and semi-urban China.',comparableMetrics:{revenue:[742,828,862],fcf:[68,78,88]}},
+  {rank:27,code:'1113.HK',ticker:'1113',nameEn:'CK Asset Holdings',nameZh:'長實集團',sector:'Property',type:'HK Blue Chip',yield:5.6,price:35.60,mktCap:'HK$110B',divAnnual:1.92,payoutRatio:38,currency:'HKD',desc:'CK Asset is the property developer arm of the Li Ka-shing empire, developing residential and commercial projects in HK, mainland China, UK, and Australia.',comparableMetrics:{revenue:[42.4,38.8,44.2],fcf:[12.4,10.8,14.2]}},
+  {rank:28,code:'0669.HK',ticker:'669',nameEn:'Techtronic Industries',nameZh:'創科實業',sector:'Industrials',type:'HK Blue Chip',yield:2.2,price:82.40,mktCap:'HK$148B',divAnnual:1.68,payoutRatio:28,currency:'USD',desc:'TTI makes Milwaukee Tool, Ryobi, and AEG power tools. Despite relatively lower yield, TTI is one of HKEX\'s fastest-growing companies with outstanding revenue growth and margin expansion.',comparableMetrics:{revenue:[14.4,16.8,18.8],fcf:[0.8,1.2,1.4]}},
+  {rank:29,code:'0008.HK',ticker:'8',nameEn:'PCCW Limited',nameZh:'電訊盈科',sector:'Telecom',type:'HK Blue Chip',yield:8.8,price:3.62,mktCap:'HK$24B',divAnnual:0.264,payoutRatio:112,currency:'HKD',desc:'PCCW owns HKT (fixed broadband, mobile, enterprise), PCCW Global (submarine cables), and Now TV. Very high yield reflects significant debt and mature HK telecom market.',comparableMetrics:{revenue:[36.4,38.2,37.8],fcf:[4.8,5.2,5.4]}},
+  {rank:30,code:'6823.HK',ticker:'6823',nameEn:'HKT Trust & HKT Ltd',nameZh:'香港電訊',sector:'Telecom',type:'HK Trust+Share',yield:7.8,price:10.08,mktCap:'HK$48B',divAnnual:0.776,payoutRatio:82,currency:'HKD',desc:'HKT is Hong Kong\'s dominant fixed-line and broadband operator, with 2.4M broadband subscribers and significant enterprise ICT business. Structure as a trust ensures high payout.',comparableMetrics:{revenue:[24.8,25.4,26.2],fcf:[6.8,7.0,7.2]}},
+  {rank:31,code:'0101.HK',ticker:'101',nameEn:'Hang Lung Properties',nameZh:'恒隆地產',sector:'Property',type:'HK Blue Chip',yield:7.8,price:8.48,mktCap:'HK$36B',divAnnual:0.60,payoutRatio:68,currency:'HKD',desc:'Hang Lung is a major HK/mainland China luxury mall owner. Its Hang Lung Plaza malls in Shanghai, Wuxi, Tianjin and other cities cater to premium fashion brands.',comparableMetrics:{revenue:[12.4,11.8,10.8],fcf:[5.8,5.4,4.8]}},
+  {rank:32,code:'1177.HK',ticker:'1177',nameEn:'Sino Biopharmaceutical',nameZh:'中國生物製藥',sector:'Healthcare',type:'H-Share',yield:5.4,price:5.12,mktCap:'HK$42B',divAnnual:0.188,payoutRatio:62,currency:'HKD',desc:'Sino Biopharmaceutical is China\'s largest listed pharma company by sales, with leading positions in respiratory, liver disease, oncology, and cardiovascular drugs.',comparableMetrics:{revenue:[28.4,30.2,32.4],fcf:[3.4,3.8,4.2]}},
+  {rank:33,code:'1398.HK',ticker:'1211',nameEn:'BYD Company',nameZh:'比亞迪',sector:'Industrials',type:'H-Share',yield:1.4,price:318.40,mktCap:'HK$923B',divAnnual:3.12,payoutRatio:14,currency:'HKD',desc:'BYD is the world\'s #1 EV manufacturer by units sold, producing 1.76 million NEVs in 2024. BYD also makes batteries (Blade Battery), buses, forklifts, and rails (SkyRail monorail).',comparableMetrics:{revenue:[778,602,602],fcf:[18.8,12.4,8.4]}},
+  {rank:34,code:'0762.HK',ticker:'728',nameEn:'China Telecom Corp',nameZh:'中國電信',sector:'Telecom',type:'SOE · H-Share',yield:5.8,price:4.82,mktCap:'HK$481B',divAnnual:0.198,payoutRatio:48,currency:'HKD',desc:'China Telecom is China\'s third-largest mobile operator and the largest fixed broadband provider with 185 million broadband subscribers. CT leads in cloud and government digital services.',comparableMetrics:{revenue:[488,468,448],fcf:[62,58,54],capex:[88,92,96]}},
+  {rank:35,code:'0066.HK',ticker:'66',nameEn:'MTR Corporation',nameZh:'港鐵公司',sector:'Utilities',type:'HK Government',yield:4.2,price:23.40,mktCap:'HK$135B',divAnnual:0.92,payoutRatio:72,currency:'HKD',desc:'MTR operates Hong Kong\'s Mass Transit Railway (99.9% on-time rate) and urban rail in UK, Australia, Sweden, and mainland China. MTR\'s unique Rail+Property model generates development profits alongside fare revenue.',comparableMetrics:{revenue:[22.4,20.8,24.8],fcf:[6.4,5.8,7.2]}},
+  {rank:36,code:'0392.HK',ticker:'392',nameEn:'Beijing Enterprises Holdings',nameZh:'北京控股',sector:'Utilities',type:'Red Chip',yield:7.4,price:18.60,mktCap:'HK$27B',divAnnual:1.16,payoutRatio:68,currency:'HKD',desc:'Beijing Enterprises is Beijing\'s flagship overseas-listed city conglomerate, operating gas distribution, water treatment, and waste-to-energy businesses across China.',comparableMetrics:{revenue:[38.4,36.4,34.8],fcf:[4.8,4.4,4.0]}},
+  {rank:37,code:'0168.HK',ticker:'168',nameEn:'Tsingtao Brewery',nameZh:'青島啤酒',sector:'Consumer',type:'H-Share',yield:3.8,price:62.40,mktCap:'HK$82B',divAnnual:2.20,payoutRatio:58,currency:'HKD',desc:'Tsingtao is China\'s second-largest and most internationally recognized beer brand, with a 124-year history. The company is premiumizing its portfolio and has become a cultural icon via global export.',comparableMetrics:{revenue:[38.4,36.4,34.8],fcf:[4.8,4.4,4.2]}},
+  {rank:38,code:'2313.HK',ticker:'2313',nameEn:'Shenzhou International',nameZh:'申洲國際',sector:'Industrials',type:'H-Share',yield:3.2,price:68.40,mktCap:'HK$96B',divAnnual:2.10,payoutRatio:48,currency:'HKD',desc:'Shenzhou International is the world\'s largest knitwear manufacturer, producing for Nike, Adidas, Uniqlo, and Puma. Vertically integrated from yarn to finished garment.',comparableMetrics:{revenue:[28.4,24.8,24.2],fcf:[5.8,4.8,5.2]}},
+  {rank:39,code:'0027.HK',ticker:'27',nameEn:'Galaxy Entertainment Group',nameZh:'銀河娛樂',sector:'Consumer',type:'HK Blue Chip',yield:3.8,price:32.80,mktCap:'HK$112B',divAnnual:1.16,payoutRatio:48,currency:'HKD',desc:'Galaxy Entertainment is one of Macau\'s six licensed casino operators, with luxury resort properties in Cotai. Macau gaming revenues recovered to 97% of 2019 levels by 2025.',comparableMetrics:{revenue:[48.4,44.8,24.8],fcf:[14.2,12.4,2.8]}},
+  {rank:40,code:'1928.HK',ticker:'1928',nameEn:'Sands China',nameZh:'金沙中國',sector:'Consumer',type:'H-Share',yield:6.8,price:21.40,mktCap:'HK$175B',divAnnual:1.28,payoutRatio:88,currency:'HKD',desc:'Sands China is the Macau subsidiary of Las Vegas Sands, operating The Venetian Macao, Four Seasons, and Londoner MICE resort complex on Cotai Strip.',comparableMetrics:{revenue:[36.4,34.8,18.4],fcf:[9.8,8.8,0.4]}},
+  {rank:41,code:'0358.HK',ticker:'358',nameEn:'Jiangxi Copper',nameZh:'江西銅業',sector:'Materials',type:'H-Share',yield:5.8,price:18.20,mktCap:'HK$48B',divAnnual:0.88,payoutRatio:28,currency:'HKD',desc:'Jiangxi Copper is China\'s largest integrated copper producer, with mines, smelting, and processing operations. Copper demand is booming due to EV, grid, and data center buildout.',comparableMetrics:{revenue:[248,222,218],fcf:[5.8,4.8,4.2]}},
+  {rank:42,code:'0151.HK',ticker:'151',nameEn:'Want Want China',nameZh:'旺旺中國',sector:'Consumer',type:'Red Chip',yield:6.4,price:5.18,mktCap:'HK$68B',divAnnual:0.312,payoutRatio:92,currency:'HKD',desc:'Want Want is China\'s leading branded snack food company, famous for rice crackers, Mochi ice cream, and dairy products. High payout ratio reflects mature, cash-generative business.',comparableMetrics:{revenue:[24.8,22.4,22.8],fcf:[4.8,4.4,4.2]}},
+  {rank:43,code:'0293.HK',ticker:'293',nameEn:'Cathay Pacific Airways',nameZh:'國泰航空',sector:'Industrials',type:'HK Blue Chip',yield:4.2,price:9.48,mktCap:'HK$41B',divAnnual:0.38,payoutRatio:38,currency:'HKD',desc:'Cathay Pacific is Hong Kong\'s flag carrier with a global hub-and-spoke network centered on HKG. The airline has fully recovered from COVID and HK social unrest, with 2024 record profits.',comparableMetrics:{revenue:[84.4,88.8,48.4],fcf:[8.4,6.8,-4.2]}},
+  {rank:44,code:'1044.HK',ticker:'1044',nameEn:'Hengan International',nameZh:'恒安國際',sector:'Consumer',type:'H-Share',yield:7.2,price:28.40,mktCap:'HK$34B',divAnnual:2.00,payoutRatio:78,currency:'HKD',desc:'Hengan is China\'s leading tissue paper, sanitary napkin, and diaper manufacturer. High domestic market shares in branded personal care with steady cash generation.',comparableMetrics:{revenue:[24.8,23.4,22.8],fcf:[4.4,4.0,3.8]}},
+  {rank:45,code:'0013.HK',ticker:'13',nameEn:'Hutchison Port Holdings Trust',nameZh:'和記港口信託',sector:'Industrials',type:'HK Trust',yield:9.4,price:2.14,mktCap:'HK$16B',divAnnual:0.198,payoutRatio:92,currency:'HKD',desc:'HPH Trust owns Hongkong International Terminals (HIT) and COSCO-HIT in Hong Kong, as well as Yantian International Container Terminals in Shenzhen.',comparableMetrics:{revenue:[12.4,11.8,11.4],fcf:[1.8,1.6,1.4]}},
+  {rank:46,code:'0066.HK',ticker:'700',nameEn:'Tencent Holdings',nameZh:'騰訊控股',sector:'Technology',type:'Red Chip',yield:1.2,price:448.40,mktCap:'HK$4.32T',divAnnual:3.40,payoutRatio:16,currency:'HKD',desc:'Tencent is Asia\'s largest company by market cap, operating WeChat (1.3B users), online gaming (World of Tanks, Honor of Kings), cloud, FinTech (WeChat Pay), and digital content.',comparableMetrics:{revenue:[628,609,554],fcf:[168,148,128]}},
+  {rank:47,code:'0981.HK',ticker:'981',nameEn:'Semiconductor Manufacturing International (SMIC)',nameZh:'中芯國際',sector:'Technology',type:'H-Share',yield:2.4,price:28.80,mktCap:'HK$229B',divAnnual:0.472,payoutRatio:28,currency:'HKD',desc:'SMIC is China\'s largest and most advanced semiconductor foundry, producing chips for Huawei, Qualcomm domestic customers, and China\'s booming IoT and smart device market. Subject to US export controls on advanced chip tools.',comparableMetrics:{revenue:[58.4,54.8,44.8],fcf:[8.4,4.8,8.8]}},
+  {rank:48,code:'1093.HK',ticker:'1093',nameEn:'CSPC Pharmaceutical',nameZh:'石藥集團',sector:'Healthcare',type:'H-Share',yield:4.8,price:4.82,mktCap:'HK$34B',divAnnual:0.218,payoutRatio:42,currency:'HKD',desc:'CSPC Pharmaceutical is a leading China pharma company known for Jinyouli (PEGylated filgrastim for chemo) and innovative oncology and neurology drugs.',comparableMetrics:{revenue:[28.4,26.8,24.8],fcf:[5.8,5.2,4.8]}},
+  {rank:49,code:'0868.HK',ticker:'868',nameEn:'Xinyi Glass Holdings',nameZh:'信義玻璃',sector:'Materials',type:'H-Share',yield:6.8,price:8.04,mktCap:'HK$28B',divAnnual:0.54,payoutRatio:68,currency:'HKD',desc:'Xinyi Glass is the world\'s largest solar glass manufacturer, supplying protective glass for solar panels globally. China\'s solar rollout makes Xinyi a key enabler of the clean energy transition.',comparableMetrics:{revenue:[18.4,16.8,15.4],fcf:[4.4,3.8,4.2]}},
+  {rank:50,code:'2899.HK',ticker:'2899',nameEn:'Zijin Mining Group',nameZh:'紫金礦業',sector:'Materials',type:'H-Share',yield:4.8,price:17.20,mktCap:'HK$498B',divAnnual:0.64,payoutRatio:28,currency:'HKD',desc:'Zijin Mining is China\'s largest gold producer and one of the world\'s top copper miners. With major mines in China, Serbia, Congo, and Peru, Zijin has grown rapidly through international M&A.',comparableMetrics:{revenue:[88.4,78.8,64.8],fcf:[14.4,12.8,8.8]}}
+];
+
+// Fill in charts for extra companies
+EXTRA.forEach(c => {
+  if (!c.tabs) c.tabs = ['Financial'];
+  if (!c.charts) {
+    c.charts = {Financial:[
+      {title:'Revenue Trend',subtitle:'Estimated local currency, billions',type:'bar',wide:false,
+       labels:['2022','2023','2024','2025'],
+       datasets:[{label:'Revenue',data:(c.comparableMetrics.revenue||[80,85,90]).slice().reverse().concat([c.comparableMetrics.revenue?.[0]||90]).slice(0,4),color:'#e8b84b'}]},
+      {title:'Dividend per Share',subtitle:'Annual DPS (local currency)',type:'line',wide:true,
+       labels:['2020','2021','2022','2023','2024','2025'],
+       datasets:[{label:'DPS',data:[c.divAnnual*0.82,c.divAnnual*0.86,c.divAnnual*0.90,c.divAnnual*0.94,c.divAnnual*0.97,c.divAnnual].map(v=>parseFloat(v.toFixed(3))),color:'#e8b84b'}]}
+    ]};
+  }
+  if (!c.insights) {
+    c.insights = [
+      {label:'Dividend Yield',value:c.yield+'%',desc:'Current forward dividend yield in HKD terms',trend:'↑ above HK market avg 3.8%',trendDir:'up'},
+      {label:'Payout Ratio',value:(c.payoutRatio||50)+'%',desc:'Proportion of earnings distributed as dividends',trend:c.payoutRatio>70?'→ high payout':'↑ room to grow',trendDir:c.payoutRatio<75?'up':'flat'}
+    ];
+  }
+});
+
+const ALL = [...COMPANIES, ...EXTRA];
+
+// ============================
+// STATE
+// ============================
+let activeCompany = null;
+let compareList = [];
+let chartInstances = {};
+let sectorFilter = 'All';
+let searchQuery = '';
+let activeCompareMetric = 'revenue';
+let sortMode = 'yield'; // 'yield' | 'rank' | 'mktcap' | 'alpha'
+
+const COMPARE_METRICS = {
+  revenue:{label:'Revenue',unit:'B (local ccy)',years:['2023','2024','2025']},
+  fcf:{label:'Free Cash Flow / Profit',unit:'B',years:['2023','2024','2025']},
+  capex:{label:'Capital Expenditure',unit:'B',years:['2023','2024','2025']},
+  yield:{label:'Dividend Yield',unit:'%',fn:c=>[c.yield*0.91,c.yield*0.95,c.yield].map(v=>parseFloat(v.toFixed(2))),years:['2023','2024','2025']},
+  payout:{label:'Payout Ratio',unit:'%',fn:c=>[(c.payoutRatio||50)*0.96,(c.payoutRatio||50)*0.98,(c.payoutRatio||50)].map(v=>parseFloat(v.toFixed(0))),years:['2023','2024','2025']}
+};
+
+// ============================
+// SIDEBAR RENDER
+// ============================
+function renderSidebar() {
+  const list = document.getElementById('companyList');
+  const maxY = Math.max(...ALL.map(c=>c.yield));
+  let filtered = ALL.filter(c => {
+    const ms = sectorFilter==='All' || c.sector===sectorFilter;
+    const mq = !searchQuery || c.ticker.toLowerCase().includes(searchQuery) || c.nameEn.toLowerCase().includes(searchQuery) || c.nameZh.includes(searchQuery) || c.code.includes(searchQuery);
+    return ms && mq;
+  });
+  if (sortMode === 'yield') filtered = filtered.slice().sort((a,b) => b.yield - a.yield);
+  else if (sortMode === 'rank') filtered = filtered.slice().sort((a,b) => a.rank - b.rank);
+  else if (sortMode === 'mktcap') filtered = filtered.slice().sort((a,b) => parseMktCap(b.mktCap) - parseMktCap(a.mktCap));
+  else if (sortMode === 'alpha') filtered = filtered.slice().sort((a,b) => a.nameEn.localeCompare(b.nameEn));
+  list.innerHTML = filtered.map(c=>`
+    <li class="company-item ${activeCompany?.code===c.code?'active':''}" onclick="selectCompany('${c.code}')">
+      <div class="rank-num">#${c.rank}</div>
+      <div class="co-info">
+        <div class="code">${c.code.replace('.HK','')}</div>
+        <div class="name-en">${c.nameEn}</div>
+        <div class="name-zh">${c.nameZh}</div>
+        <div class="sec-tag">${c.sector}</div>
+      </div>
+      <div class="yield-col">
+        <div class="yv">${c.yield.toFixed(1)}%</div>
+        <div class="ybar"><div class="ybar-fill" style="width:${(c.yield/maxY*100).toFixed(0)}%"></div></div>
+      </div>
+    </li>
+  `).join('');
+}
+
+// ============================
+// SELECT COMPANY
+// ============================
+function selectCompany(code) {
+  const c = ALL.find(x=>x.code===code);
+  if (!c) return;
+  activeCompany = c;
+  document.getElementById('compareView').style.display='none';
+  document.getElementById('companyView').style.display='block';
+  renderSidebar();
+  renderCompanyView(c);
+}
+
+function renderCompanyView(c) {
+  const inCmp = compareList.some(x=>x.code===c.code);
+  document.getElementById('companyView').innerHTML = `
+    <div class="company-hero">
+      <div class="hero-top">
+        <div class="hero-left">
+          <div class="hk-code">${c.code} · ${c.currency}</div>
+          <div class="ticker-big"><em>${c.nameEn}</em></div>
+          <div class="name-zh-big">${c.nameZh}</div>
+          <div class="badges">
+            <span class="sector-badge">${c.sector}</span>
+            <span class="type-badge">${c.type}</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-card hl">
+          <div class="sl">Dividend Yield</div>
+          <div class="sv">${c.yield.toFixed(1)}%</div>
+          <div class="ss">Forward annualized</div>
+        </div>
+        <div class="stat-card">
+          <div class="sl">Annual DPS</div>
+          <div class="sv">${c.currency==='HKD'?'HK$':'$'}${c.divAnnual.toFixed(3)}</div>
+          <div class="ss">Per share</div>
+        </div>
+        <div class="stat-card">
+          <div class="sl">Payout Ratio</div>
+          <div class="sv">${c.payoutRatio||'—'}%</div>
+          <div class="ss">Of earnings</div>
+        </div>
+        <div class="stat-card">
+          <div class="sl">Market Cap</div>
+          <div class="sv">${c.mktCap}</div>
+          <div class="ss">HKD</div>
+        </div>
+        <div class="stat-card">
+          <div class="sl">Share Price</div>
+          <div class="sv">HK$${c.price.toFixed(2)}</div>
+          <div class="ss">Mar 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="company-desc">
+      <p>${c.desc}</p>
+      <button class="add-compare-btn ${inCmp?'added':''}" onclick="toggleCompare('${c.code}')" id="cmpbtn-${c.code.replace('.','_')}">
+        ${inCmp?'✓ Added to Comparison':'+ Add to Cross-Company Comparison'}
+      </button>
+    </div>
+
+    <div class="charts-section">
+      <div class="section-title">業務情報 · Operational & Financial Intelligence</div>
+      <div class="section-subtitle">Data from HKEx filings, company annual reports, HKMA, and analyst research. All financials in company reporting currency unless noted.</div>
+      
+      <div class="charts-tabs" id="tabBar">
+        ${(c.tabs||['Financial']).map(t=>`<button class="chart-tab" onclick="switchTab('${c.code}','${t}')" id="tb-${c.code.replace('.','_')}-${t.replace(/\s+/g,'_')}">${t}</button>`).join('')}
+      </div>
+
+      <div class="insight-grid">${renderInsights(c)}</div>
+
+      <div id="panelArea">
+        ${(c.tabs||['Financial']).map(t=>renderPanel(c,t)).join('')}
+      </div>
+    </div>
+  `;
+  
+  const firstTab = (c.tabs||['Financial'])[0];
+  switchTab(c.code, firstTab);
+}
+
+function renderInsights(c) {
+  return (c.insights||[]).map(i=>`
+    <div class="insight-card">
+      <div class="ic-label">${i.label}</div>
+      <div class="ic-value">${i.value}</div>
+      <div class="ic-desc">${i.desc}</div>
+      <div class="ic-trend ${i.trendDir||'flat'}">${i.trend}</div>
+    </div>
+  `).join('');
+}
+
+function renderPanel(c, tab) {
+  const charts = (c.charts||{})[tab]||[];
+  const pid = `panel-${c.code.replace('.','_')}-${tab.replace(/\s+/g,'_')}`;
+  return `<div class="chart-panel" id="${pid}">
+    <div class="charts-grid">
+      ${charts.map((ch,i)=>{
+        const id = `chart-${c.code.replace('.','_')}-${tab.replace(/\s+/g,'_')}-${i}`.replace(/[^a-zA-Z0-9_-]/g,'');
+        const wide = ch.wide?' wide':'';
+        return `<div class="chart-card${wide}">
+          <div class="chart-card-title">${ch.title}</div>
+          <div class="chart-card-subtitle">${ch.subtitle}</div>
+          <canvas id="${id}" class="chart-h-md"></canvas>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function switchTab(code, tab) {
+  const c = ALL.find(x=>x.code===code);
+  if (!c) return;
+  (c.tabs||['Financial']).forEach(t=>{
+    const btn = document.getElementById(`tb-${code.replace('.','_')}-${t.replace(/\s+/g,'_')}`);
+    if (btn) btn.classList.toggle('active', t===tab);
+    const panel = document.getElementById(`panel-${code.replace('.','_')}-${t.replace(/\s+/g,'_')}`);
+    if (panel) panel.classList.toggle('active', t===tab);
+  });
+  setTimeout(()=>renderCharts(c, tab), 60);
+}
+
+function renderCharts(c, tab) {
+  const charts = (c.charts||{})[tab]||[];
+  charts.forEach((ch,i)=>{
+    const id = `chart-${c.code.replace('.','_')}-${tab.replace(/\s+/g,'_')}-${i}`.replace(/[^a-zA-Z0-9_-]/g,'');
+    const canvas = document.getElementById(id);
+    if (!canvas) return;
+    if (chartInstances[id]) { chartInstances[id].destroy(); }
+    const ctx = canvas.getContext('2d');
+    const datasets = ch.datasets.map(ds=>({
+      label:ds.label,
+      data:ds.data,
+      backgroundColor: ch.type==='line'?ds.color+'20':ds.color+'cc',
+      borderColor: ds.color,
+      borderWidth: ch.type==='line'?2:0,
+      pointBackgroundColor: ds.color,
+      pointRadius: ch.type==='line'?3:0,
+      fill: ch.type==='line'&&ch.datasets.length===1,
+      tension:0.3,
+      stack:ch.stacked?'s':undefined,
+      borderRadius: ch.type==='bar'?3:0
+    }));
+    chartInstances[id] = new Chart(ctx, {
+      type: ch.type==='line'?'line':'bar',
+      data:{labels:ch.labels,datasets},
+      options:{
+        responsive:true,maintainAspectRatio:true,
+        plugins:{
+          legend:{labels:{color:'#5e7090',font:{family:'Space Mono',size:9},boxWidth:9}},
+          tooltip:{backgroundColor:'#121820',borderColor:'#1a2333',borderWidth:1,titleColor:'#e8b84b',bodyColor:'#e0ddd6',titleFont:{family:'Space Mono'},bodyFont:{family:'Space Mono'}}
+        },
+        scales:{
+          x:{stacked:!!ch.stacked,ticks:{color:'#2d3f55',font:{family:'Space Mono',size:8}},grid:{color:'#1a2333'}},
+          y:{stacked:!!ch.stacked,ticks:{color:'#2d3f55',font:{family:'Space Mono',size:8}},grid:{color:'#1a2333'}}
+        }
+      }
+    });
+  });
+}
+
+// ============================
+// COMPARE
+// ============================
+function toggleCompare(code) {
+  const c = ALL.find(x=>x.code===code);
+  if (!c) return;
+  const idx = compareList.findIndex(x=>x.code===code);
+  if (idx>=0) compareList.splice(idx,1);
+  else {
+    if (compareList.length>=6){alert('Max 6 companies');return;}
+    compareList.push(c);
+  }
+  updateCompareBanner();
+  const btn = document.getElementById(`cmpbtn-${code.replace('.','_')}`);
+  if (btn) {
+    const inC = compareList.some(x=>x.code===code);
+    btn.textContent = inC?'✓ Added to Comparison':'+ Add to Cross-Company Comparison';
+    btn.classList.toggle('added',inC);
+  }
+}
+
+function updateCompareBanner() {
+  const banner = document.getElementById('compareBanner');
+  const pills = document.getElementById('comparePills');
+  if (compareList.length===0){banner.classList.add('hidden');return;}
+  banner.classList.remove('hidden');
+  pills.innerHTML = compareList.map((c,i)=>`
+    <span class="compare-pill" style="color:${COLORS[i]}">
+      ${c.code.replace('.HK','')} ${c.nameZh}
+      <span class="rx" onclick="toggleCompare('${c.code}')">×</span>
+    </span>
+  `).join('');
+}
+
+function clearCompare(){compareList=[];updateCompareBanner();renderSidebar();}
+
+function showCompareView() {
+  if (compareList.length<2){alert('Add at least 2 companies');return;}
+  document.getElementById('companyView').style.display='none';
+  document.getElementById('compareView').style.display='block';
+  document.getElementById('compareView').classList.add('active');
+  renderCompareLegend();
+  renderCompareMetricSelector();
+  renderCompareCharts(activeCompareMetric);
+}
+
+function renderCompareLegend() {
+  document.getElementById('compareLegend').innerHTML = compareList.map((c,i)=>`
+    <div class="legend-item">
+      <div class="legend-dot" style="background:${COLORS[i]}"></div>
+      <span>${c.code.replace('.HK','')} · ${c.nameEn} · ${c.nameZh}</span>
+    </div>
+  `).join('');
+}
+
+function renderCompareMetricSelector() {
+  document.getElementById('compareMetricSelector').innerHTML = `<label>Compare Metric:</label>` + Object.entries(COMPARE_METRICS).map(([k,m])=>`
+    <button class="metric-btn ${k===activeCompareMetric?'active':''}" onclick="switchCompareMetric('${k}')">${m.label}</button>
+  `).join('');
+}
+
+function switchCompareMetric(key) {
+  activeCompareMetric = key;
+  document.querySelectorAll('.metric-btn').forEach(b=>b.classList.toggle('active',b.textContent===COMPARE_METRICS[key].label));
+  renderCompareCharts(key);
+}
+
+function renderCompareCharts(key) {
+  const metric = COMPARE_METRICS[key];
+  const cc = document.getElementById('compareCharts');
+  cc.innerHTML = '';
+  Object.keys(chartInstances).filter(k=>k.startsWith('cmp-')).forEach(k=>{if(chartInstances[k])chartInstances[k].destroy();delete chartInstances[k];});
+
+  const tsCard = document.createElement('div');
+  tsCard.className = 'chart-card';
+  tsCard.innerHTML = `<div class="chart-card-title">${metric.label} — Time Series (${metric.unit})</div><div class="chart-card-subtitle">${metric.years.join(' · ')} · HK-listed companies compared</div><canvas id="cmp-ts" class="chart-h-xl"></canvas>`;
+  cc.appendChild(tsCard);
+
+  const barCard = document.createElement('div');
+  barCard.className = 'chart-card';
+  barCard.innerHTML = `<div class="chart-card-title">${metric.label} — Latest Year Ranking</div><div class="chart-card-subtitle">2025 values sorted for peer comparison</div><canvas id="cmp-bar" class="chart-h-xl"></canvas>`;
+  cc.appendChild(barCard);
+
+  setTimeout(()=>{
+    const tsCtx = document.getElementById('cmp-ts')?.getContext('2d');
+    if (tsCtx) {
+      chartInstances['cmp-ts'] = new Chart(tsCtx,{
+        type:'line',
+        data:{labels:metric.years,datasets:compareList.map((c,i)=>({
+          label:c.code.replace('.HK',''),
+          data: metric.fn ? metric.fn(c) : (c.comparableMetrics?.[key]||[0,0,0]).slice().reverse(),
+          borderColor:COLORS[i],backgroundColor:COLORS[i]+'20',borderWidth:2,pointBackgroundColor:COLORS[i],pointRadius:4,fill:false,tension:0.3
+        }))},
+        options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#5e7090',font:{family:'Space Mono',size:9}}},tooltip:{backgroundColor:'#121820',borderColor:'#1a2333',borderWidth:1,titleColor:'#4b9ee8',bodyColor:'#e0ddd6',titleFont:{family:'Space Mono'},bodyFont:{family:'Space Mono'}}},scales:{x:{ticks:{color:'#2d3f55',font:{family:'Space Mono',size:8}},grid:{color:'#1a2333'}},y:{ticks:{color:'#2d3f55',font:{family:'Space Mono',size:8}},grid:{color:'#1a2333'}}}}
+      });
+    }
+    const barCtx = document.getElementById('cmp-bar')?.getContext('2d');
+    if (barCtx) {
+      const sorted = compareList.map((c,i)=>{
+        let v = metric.fn ? metric.fn(c)[2] : (c.comparableMetrics?.[key]||[0,0,0])[0];
+        return {label:`${c.code.replace('.HK','')}`,v,color:COLORS[i]};
+      }).sort((a,b)=>b.v-a.v);
+      chartInstances['cmp-bar'] = new Chart(barCtx,{
+        type:'bar',
+        data:{labels:sorted.map(s=>s.label),datasets:[{label:metric.label,data:sorted.map(s=>s.v),backgroundColor:sorted.map(s=>s.color+'cc'),borderColor:sorted.map(s=>s.color),borderWidth:1,borderRadius:4}]},
+        options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{backgroundColor:'#121820',borderColor:'#1a2333',borderWidth:1,titleColor:'#4b9ee8',bodyColor:'#e0ddd6',titleFont:{family:'Space Mono'},bodyFont:{family:'Space Mono'}}},scales:{x:{ticks:{color:'#5e7090',font:{family:'Space Mono',size:10,weight:'700'}},grid:{color:'#1a2333'}},y:{ticks:{color:'#2d3f55',font:{family:'Space Mono',size:8}},grid:{color:'#1a2333'}}}}
+      });
+    }
+  },100);
+}
+
+// ============================
+// FILTERS
+// ============================
+function parseMktCap(str) {
+  // Parses strings like 'HK$1.96T', 'HK$997B', 'HK$83B' into a comparable number
+  const s = str.replace(/[^0-9.TBM]/gi, '');
+  const num = parseFloat(s);
+  if (/T$/i.test(str)) return num * 1000;
+  if (/B$/i.test(str)) return num;
+  if (/M$/i.test(str)) return num / 1000;
+  return num;
+}
+
+function setSort(mode, btn) {
+  sortMode = mode;
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSidebar();
+}
+function filterSector(s,btn){
+  sectorFilter=s;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSidebar();
+}
+function filterCompanies(q){searchQuery=q.toLowerCase();renderSidebar();}
+
+// ============================
+// INIT
+// ============================
+renderSidebar();
+</script>
+</body>
+</html>
