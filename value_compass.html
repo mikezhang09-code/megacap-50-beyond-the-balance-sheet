@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Value Investor's Compass — 10 Graham–Buffett Picks 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080c14; --card: #0f1623; --card2: #151d2e; --border: #1c2740;
+  --accent: #4f8ff7; --gold: #f0a830; --green: #34d399; --red: #f87171;
+  --purple: #a78bfa; --cyan: #22d3ee; --pink: #f472b6;
+  --text: #e8ecf4; --muted: #8b99b0; --dim: #556178;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; overflow-x:hidden; }
+::-webkit-scrollbar { width:5px; } ::-webkit-scrollbar-track { background:var(--card); } ::-webkit-scrollbar-thumb { background:var(--dim); border-radius:3px; }
+.mono { font-family:'JetBrains Mono',monospace; }
+button { font-family:inherit; cursor:pointer; border:none; outline:none; transition:all .2s; }
+.header { border-bottom:1px solid var(--border); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+.header h1 { font-size:18px; font-weight:800; letter-spacing:-.4px; }
+.header h1 .cn { color:var(--dim); font-size:13px; font-weight:400; margin-left:8px; }
+.header .sub { font-size:10px; color:var(--dim); margin-top:2px; letter-spacing:.3px; }
+.tabs { display:flex; gap:4px; }
+.tab { padding:8px 18px; border-radius:8px; font-size:13px; font-weight:600; border:1px solid var(--border); background:transparent; color:var(--muted); }
+.tab.on { background:var(--accent); color:#fff; border-color:var(--accent); }
+.main { padding:20px 24px; max-width:1300px; margin:0 auto; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+.grid4 { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.grid5 { display:grid; grid-template-columns:repeat(auto-fill,minmax(175px,1fr)); gap:10px; }
+.card { background:var(--card); border-radius:12px; padding:18px; border:1px solid var(--border); }
+.card-sm { background:var(--card); border-radius:10px; padding:12px 16px; border:1px solid var(--border); }
+.card-sm .label { font-size:10px; color:var(--dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px; }
+.card-sm .val { font-size:20px; font-weight:700; font-family:'JetBrains Mono',monospace; }
+.card-sm .sub { font-size:10px; color:var(--muted); margin-top:2px; }
+.chart-title { font-size:14px; font-weight:700; margin-bottom:4px; }
+.chart-title .cn { font-size:12px; color:var(--dim); margin-left:6px; font-weight:400; }
+.chart-wrap { position:relative; height:280px; margin-top:10px; }
+.stock-card { cursor:pointer; transition:border-color .2s, transform .15s; }
+.stock-card:hover { transform:translateY(-2px); }
+.ticker-btn { padding:5px 12px; border-radius:8px; font-size:11px; font-weight:600; border:2px solid var(--border); background:transparent; color:var(--muted); }
+.ticker-btn.on { background:rgba(79,143,247,.12); }
+.sub-tab { padding:7px 16px; border-radius:8px; font-size:12px; font-weight:600; border:1px solid var(--border); background:transparent; color:var(--muted); }
+.sub-tab.on { border-color:var(--accent); color:var(--accent); background:rgba(79,143,247,.08); }
+.metric-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+.comp-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
+.comp-header .name { font-size:22px; font-weight:800; }
+.comp-header .info { font-size:14px; color:var(--dim); }
+.source-note { font-size:9px; color:var(--dim); padding:10px; background:var(--card); border-radius:8px; border:1px solid var(--border); margin-top:12px; line-height:1.5; }
+.fade-in { animation: fadeIn .4s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+@media(max-width:768px) { .grid2,.grid3,.grid4 { grid-template-columns:1fr; } .header { padding:10px 14px; } .main { padding:14px; } }
+</style>
+</head>
+<body>
+<div class="header">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="./index.html" style="color:var(--muted);text-decoration:none;font-size:13px;padding:6px 12px;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;gap:4px;" title="Back to MegaCap 50">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Home
+    </a>
+    <div>
+      <h1><span style="color:var(--accent)">◆</span> Value Investor's Compass<span class="cn">价值投资者指南针</span></h1>
+      <div class="sub">10 Graham–Buffett Picks · Real Data from SEC Filings & Annual Reports · March 2026</div>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab on" data-tab="overview">Overview 总览</button>
+    <button class="tab" data-tab="company">Company 公司</button>
+    <button class="tab" data-tab="compare">Compare 对比</button>
+  </div>
+</div>
+<div class="main" id="app"></div>
+
+<script>
+// ===== REAL DATA from SEC filings, HKEX filings, company annual reports (FY2024/FY2025) =====
+const SC = {"BRK.B":"#7c3aed","JPM":"#2563eb","JNJ":"#059669","UNH":"#0891b2","MU":"#d97706","0700":"#16a34a","9988":"#ea580c","1398":"#dc2626","2318":"#0d9488","1299":"#a855f7"};
+const PIES = ["#4f8ff7","#f0a830","#34d399","#f87171","#a78bfa","#f472b6","#22d3ee"];
+
+const D = {
+  "BRK.B": { name:"Berkshire Hathaway", cn:"伯克希尔哈撒韦", ex:"NYSE", sec:"Diversified",
+    pe:16,fpe:20.6,roe:9.8,roic:17.1,de:0.19,dy:0,mc:1050,cash:374,rev:371,ni:67,beta:0.69,
+    revH:{l:["2019","2020","2021","2022","2023","2024"],d:[254.6,245.5,276.1,302.1,364.5,371.4]},
+    seg:{l:["Insurance","BNSF","BH Energy","Mfg","Svc&Retail","Invest Inc"],d:[83.3,23.4,24.6,75.5,95.6,69]},
+    moats:[
+      {t:"Cash Reserves ($B) 现金储备",type:"line",l:["2019","2020","2021","2022","2023","2024","Q3'25"],d:[128,138,147,128,168,334,374],c:"#f0a830"},
+      {t:"Top Holdings ($B) 主要持股",type:"hbar",l:["Apple","BofA","Coca-Cola","Chevron","Occidental","Kraft"],d:[75.1,33.2,25.5,18.6,14.2,10.5],c:"#4f8ff7"},
+      {t:"Operating Earnings ($B) 经营利润",type:"line",l:["2019","2020","2021","2022","2023","2024"],d:[23.97,21.92,27.46,30.79,37.35,47.44],c:"#34d399"},
+    ]},
+  "JPM": { name:"JPMorgan Chase", cn:"摩根大通", ex:"NYSE", sec:"Banking",
+    pe:14.5,fpe:13.8,roe:17,roic:3.2,de:1.5,dy:2.1,mc:700,cash:36,rev:180,ni:58,beta:1.1,
+    revH:{l:["2019","2020","2021","2022","2023","2024"],d:[115.6,119.5,121.6,128.7,158.1,180.6]},
+    seg:{l:["Consumer Banking","Corp & Inv Bank","Asset & Wealth","Commercial Bank"],d:[71.5,70.1,21.5,17.5]},
+    moats:[
+      {t:"Customer Deposits ($B) 客户存款",type:"bar",l:["2019","2020","2021","2022","2023","2024"],d:[1562,2144,2462,2340,2401,2406],c:"#2563eb"},
+      {t:"AUM ($B) 资产管理规模",type:"line",l:["2019","2020","2021","2022","2023","2024"],d:[2424,2714,3119,2776,3427,4009],c:"#f0a830"},
+      {t:"New Checking Accts (M/yr) 新增活期账户",type:"bar",l:["2020","2021","2022","2023","2024"],d:[1.2,1.5,1.8,1.9,2.0],c:"#34d399"},
+    ]},
+  "JNJ": { name:"Johnson & Johnson", cn:"强生", ex:"NYSE", sec:"Healthcare",
+    pe:22,fpe:21,roe:35,roic:13.3,de:0.6,dy:2.4,mc:400,cash:20,rev:94.2,ni:26.8,beta:0.35,
+    revH:{l:["2019","2020","2021","2022","2023","2024"],d:[82.1,82.6,93.8,95.0,85.2,94.2]},
+    seg:{l:["Innovative Medicine","MedTech"],d:[57.1,37.1]},
+    moats:[
+      {t:"Drug Pipeline by Phase 药物管线",type:"bar",l:["Phase I","Phase II","Phase III","Filed/Appr"],d:[18,27,14,8],c:"#059669"},
+      {t:"Dividend Per Share ($) 每股股息",type:"line",l:["2019","2020","2021","2022","2023","2024"],d:[3.75,4.04,4.24,4.52,4.76,4.96],c:"#f0a830"},
+    ]},
+  "UNH": { name:"UnitedHealth Group", cn:"联合健康集团", ex:"NYSE", sec:"Healthcare",
+    pe:18,fpe:16.5,roe:24,roic:12,de:0.7,dy:1.6,mc:500,cash:28,rev:400,ni:23,beta:0.7,
+    revH:{l:["2019","2020","2021","2022","2023","2024"],d:[242,257,287,324,371,400]},
+    seg:{l:["UnitedHealthcare","Optum Health","Optum Rx","Optum Insight"],d:[281,55,44,20]},
+    moats:[
+      {t:"Insurance Members (M) 保险会员",type:"line",l:["2019","2020","2021","2022","2023","2024"],d:[49.5,48.8,49.7,51.4,52.8,53.6],c:"#22d3ee"},
+      {t:"Optum Care Providers 医护人员",type:"bar",l:["2020","2021","2022","2023","2024"],d:[56000,60000,70000,90000,100000],c:"#34d399"},
+    ]},
+  "MU": { name:"Micron Technology", cn:"美光科技", ex:"NASDAQ", sec:"Semiconductors",
+    pe:25,fpe:12,roe:18,roic:14,de:0.3,dy:0.4,mc:100,cash:8.7,rev:29.1,ni:5.7,beta:1.2,
+    revH:{l:["FY20","FY21","FY22","FY23","FY24","FY25"],d:[21.4,27.7,30.8,15.5,25.1,29.1]},
+    seg:{l:["DRAM","NAND"],d:[22,7.1]},
+    moats:[
+      {t:"HBM Revenue Ramp ($B) HBM收入",type:"bar",l:["Q1'24","Q2'24","Q3'24","Q4'24","Q1'25","Q2'25"],d:[0.1,0.3,0.6,1.0,1.4,1.8],c:"#f0a830"},
+      {t:"Gross Margin (%) 毛利率",type:"line",l:["FY20","FY21","FY22","FY23","FY24","FY25"],d:[31,37,45,-9,22,37],c:"#4f8ff7"},
+    ]},
+  "0700": { name:"Tencent Holdings", cn:"腾讯控股", ex:"HKEX", sec:"Technology",
+    pe:22,fpe:19,roe:22,roic:18,de:0.4,dy:1,mc:530,cash:61,rev:91.7,ni:26,beta:0.8,
+    revH:{l:["2019","2020","2021","2022","2023","2024"],d:[55.5,69.8,86.5,80.5,83.9,91.7]},
+    seg:{l:["Domestic Games","Int'l Games","Social Net","Marketing","FinTech&Biz"],d:[19.6,8.1,17,17,29.7]},
+    moats:[
+      {t:"WeChat MAU (Millions) 微信月活",type:"line",l:["2019","2020","2021","2022","2023","2024"],d:[1165,1225,1268,1313,1343,1382],c:"#16a34a"},
+      {t:"Mini Program GMV (B CNY) 小程序交易额",type:"bar",l:["2021","2022","2023","2024"],d:[750,1000,1600,2000],c:"#4f8ff7"},
+      {t:"Buybacks (HK$B) 股份回购",type:"bar",l:["2021","2022","2023","2024"],d:[2.8,33.8,49.4,112],c:"#a78bfa"},
+    ]},
+  "9988": { name:"Alibaba Group", cn:"阿里巴巴集团", ex:"HKEX", sec:"Technology",
+    pe:23,fpe:11,roe:12,roic:9,de:0.2,dy:1,mc:310,cash:62,rev:137.3,ni:16,beta:0.9,
+    revH:{l:["FY20","FY21","FY22","FY23","FY24","FY25"],d:[72,109.5,134.6,130.4,130.3,137.3]},
+    seg:{l:["Taobao&Tmall","Cloud","Int'l AIDC","Cainiao","Local Svc","Other"],d:[61.8,16.5,16.3,12.4,9.1,21.2]},
+    moats:[
+      {t:"Cloud Intelligence Rev ($B/Q) 云收入",type:"bar",l:["Q1'24","Q2'24","Q3'24","Q4'24","Q1'25","Q2'25","Q3'25","Q1'26"],d:[3.5,3.8,3.7,3.5,3.7,4.2,5.6,4.7],c:"#4f8ff7"},
+      {t:"Buybacks ($B/FY) 回购",type:"bar",l:["FY22","FY23","FY24","FY25"],d:[9.5,18.1,12.5,12],c:"#f0a830"},
+    ]},
+  "1398": { name:"ICBC", cn:"中国工商银行", ex:"HKEX", sec:"Banking",
+    pe:6.5,fpe:6,roe:10,roic:1.2,de:8.5,dy:7.7,mc:310,cash:520,rev:112,ni:48.6,beta:0.5,
+    revH:{l:["2019","2020","2021","2022","2023","2024"],d:[113,116,117,114,110,112]},
+    seg:{l:["Net Interest","Fee & Commission","Other"],d:[72,22,18]},
+    moats:[
+      {t:"Total Assets (CNY Trillion) 总资产",type:"bar",l:["2019","2020","2021","2022","2023","2024"],d:[30.1,33.3,35.2,39.2,44.1,46.7],c:"#dc2626"},
+      {t:"NPL Ratio (%) 不良贷款率",type:"line",l:["2019","2020","2021","2022","2023","2024"],d:[1.43,1.58,1.42,1.38,1.36,1.30],c:"#34d399"},
+      {t:"Dividend/Share (CNY) 每股股息",type:"line",l:["2019","2020","2021","2022","2023","2024"],d:[0.26,0.27,0.29,0.31,0.32,0.34],c:"#f0a830"},
+    ]},
+  "2318": { name:"Ping An Insurance", cn:"中国平安", ex:"HKEX", sec:"Insurance",
+    pe:8.5,fpe:7.5,roe:15,roic:3,de:6.0,dy:5.5,mc:125,cash:80,rev:170,ni:18,beta:0.7,
+    revH:{l:["2019","2020","2021","2022","2023","2024"],d:[168,168,167,156,149,170]},
+    seg:{l:["Life&Health","P&C","Banking","FinTech&Health"],d:[68,44,34,24]},
+    moats:[
+      {t:"Tech Patents (Cumulative) 科技专利",type:"bar",l:["2019","2020","2021","2022","2023","2024"],d:[21000,31000,38000,44000,49000,52000],c:"#22d3ee"},
+      {t:"Retail Customers (M) 个人客户",type:"line",l:["2019","2020","2021","2022","2023","2024"],d:[200,218,227,227,231,234],c:"#34d399"},
+    ]},
+  "1299": { name:"AIA Group", cn:"友邦保险", ex:"HKEX", sec:"Insurance",
+    pe:15,fpe:13,roe:14,roic:8,de:0.3,dy:2,mc:105,cash:12,rev:20,ni:7,beta:0.9,
+    revH:{l:["2019","2020","2021","2022","2023","2024"],d:[14.8,14.1,17.3,16.0,17.9,20.0]},
+    seg:{l:["China HK/ML","Thailand","Singapore","Malaysia","Other Asia"],d:[7,3,2.6,1.6,5.8]},
+    moats:[
+      {t:"VONB ($B) 新业务价值",type:"line",l:["2019","2020","2021","2022","2023","2024"],d:[3.96,2.79,3.26,3.16,4.04,4.74],c:"#a855f7"},
+      {t:"Market Revenue Mix (%) 市场营收占比",type:"doughnut",l:["China HK/ML","Thailand","Singapore","Malaysia","Other Asia"],d:[35,15,13,8,29],c:PIES},
+    ]},
+};
+
+const TK = Object.keys(D);
+let currentTab = "overview", currentTicker = "BRK.B", currentSub = "financials";
+const charts = {};
+
+function destroyCharts() { Object.values(charts).forEach(c => c.destroy()); for(const k in charts) delete charts[k]; }
+
+function makeChart(id, type, labels, datasets, opts = {}) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const ctx = el.getContext("2d");
+  if (charts[id]) charts[id].destroy();
+  const defaults = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: opts.legend || false, labels: { color: "#8b99b0", font: { size: 11 } } } },
+    scales: type === "doughnut" || type === "pie" || type === "polarArea" ? {} : {
+      x: { grid: { color: "#1c2740" }, ticks: { color: "#8b99b0", font: { size: 10 }, maxRotation: 45 } },
+      y: { grid: { color: "#1c2740" }, ticks: { color: "#8b99b0", font: { size: 10 } }, ...(opts.yMin !== undefined ? { min: opts.yMin } : {}), ...(opts.yMax !== undefined ? { max: opts.yMax } : {}) },
+    },
+  };
+  if (type === "hbar") {
+    type = "bar";
+    defaults.indexAxis = "y";
+  }
+  charts[id] = new Chart(ctx, { type, data: { labels, datasets }, options: defaults });
+}
+
+function mc(label, val, sub) {
+  return `<div class="card-sm"><div class="label">${label}</div><div class="val">${val}</div>${sub ? `<div class="sub">${sub}</div>` : ""}</div>`;
+}
+
+function chartCard(id, title, cn, h = 280) {
+  return `<div class="card" style="margin-bottom:14px"><div class="chart-title">${title}${cn ? `<span class="cn">${cn}</span>` : ""}</div><div class="chart-wrap" style="height:${h}px"><canvas id="${id}"></canvas></div></div>`;
+}
+
+// ===== RENDER FUNCTIONS =====
+function renderOverview() {
+  const avgPE = (TK.reduce((s,t)=>s+D[t].pe,0)/10).toFixed(1);
+  const avgROE = (TK.reduce((s,t)=>s+D[t].roe,0)/10).toFixed(1);
+  const avgYield = (TK.reduce((s,t)=>s+D[t].dy,0)/10).toFixed(1);
+  const totalMC = (TK.reduce((s,t)=>s+D[t].mc,0)/1000).toFixed(1);
+
+  let html = `<div class="grid5 fade-in" style="margin-bottom:18px">`;
+  TK.forEach(t => {
+    const c = D[t]; const isUS = ["NYSE","NASDAQ"].includes(c.ex);
+    html += `<div class="card stock-card" onclick="goCompany('${t}')" style="padding:14px">
+      <div style="position:absolute;top:6px;right:8px;font-size:8px;padding:2px 5px;border-radius:3px;background:${isUS?"rgba(79,143,247,.12)":"rgba(52,211,153,.12)"};color:${isUS?"var(--accent)":"var(--green)"}">${c.ex}</div>
+      <div style="font-size:13px;font-weight:700;color:${SC[t]}">${t}</div>
+      <div style="font-size:11px;color:var(--muted)">${c.name}</div>
+      <div style="font-size:10px;color:var(--dim);margin-bottom:6px">${c.cn}</div>
+      <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--dim)">P/E</span><span class="mono" style="font-weight:600">${c.pe}x</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--dim)">ROE</span><span class="mono" style="color:var(--green);font-weight:600">${c.roe}%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--dim)">Yield</span><span class="mono" style="color:var(--gold);font-weight:600">${c.dy}%</span></div>
+    </div>`;
+  });
+  html += `</div>`;
+  html += `<div class="grid4 fade-in" style="margin-bottom:18px">
+    ${mc("Avg P/E 平均市盈率", avgPE+"x", "vs S&P 500: 27x")}
+    ${mc("Avg ROE 平均ROE", avgROE+"%", "")}
+    ${mc("Avg Yield 平均股息", avgYield+"%", "vs S&P 500: 1.3%")}
+    ${mc("Total Mkt Cap 总市值", "$"+totalMC+"T", "")}
+  </div>`;
+  html += `<div class="fade-in">${chartCard("ov_pe_roe", "P/E vs ROE — All 10 Picks", "市盈率 vs 净资产收益率", 350)}</div>`;
+  document.getElementById("app").innerHTML = html;
+
+  setTimeout(() => {
+    makeChart("ov_pe_roe", "bar", TK.map(t=>D[t].name.split(" ")[0]), [
+      { label: "P/E Ratio", data: TK.map(t=>D[t].pe), backgroundColor: "rgba(79,143,247,.7)", borderRadius: 4 },
+      { label: "ROE (%)", data: TK.map(t=>D[t].roe), backgroundColor: "rgba(52,211,153,.7)", borderRadius: 4 },
+    ], { legend: true });
+  }, 50);
+}
+
+function renderCompany() {
+  const t = currentTicker, c = D[t];
+  let html = `<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px" class="fade-in">`;
+  TK.forEach(tk => {
+    html += `<button class="ticker-btn ${tk===t?"on":""}" style="${tk===t?`border-color:${SC[tk]};color:${SC[tk]}`:"" }" onclick="goCompany('${tk}')">${tk} <span style="font-size:9px;font-weight:400">${D[tk].cn}</span></button>`;
+  });
+  html += `</div>`;
+  html += `<div class="card comp-header fade-in" style="margin-bottom:14px">
+    <div><div class="name" style="color:${SC[t]}">${c.name}</div><div class="info">${c.cn} · ${c.ex}: ${t} · ${c.sec}</div></div>
+    <div style="text-align:right"><div style="font-size:10px;color:var(--dim)">Market Cap 市值</div><div class="mono" style="font-size:20px;font-weight:700">$${c.mc}B</div></div>
+  </div>`;
+  html += `<div style="display:flex;gap:5px;margin-bottom:14px" class="fade-in">
+    <button class="sub-tab ${currentSub==="financials"?"on":""}" onclick="switchSub('financials')">Financials 财务</button>
+    <button class="sub-tab ${currentSub==="moat"?"on":""}" onclick="switchSub('moat')">Moat & Operations 护城河</button>
+  </div>`;
+
+  if (currentSub === "financials") {
+    html += `<div class="metric-row fade-in">
+      ${mc("P/E",c.pe+"x","Fwd: "+c.fpe+"x")} ${mc("ROE",c.roe+"%","")} ${mc("Yield",c.dy+"%","")}
+      ${mc("D/E",c.de.toFixed(2),"")} ${mc("Mkt Cap","$"+c.mc+"B","")} ${mc("Revenue","$"+c.rev+"B","")}
+      ${mc("Net Inc","$"+c.ni+"B","")} ${mc("Cash","$"+c.cash+"B","")} ${mc("Beta",c.beta.toFixed(2),"")}
+    </div>`;
+    html += `<div class="grid2 fade-in">
+      ${chartCard("co_rev","Revenue History ($B)","营收历史")}
+      ${chartCard("co_seg","Revenue Breakdown","营收结构")}
+    </div>`;
+  } else {
+    html += `<div class="grid2 fade-in">`;
+    c.moats.forEach((m,i) => { html += chartCard("moat_"+i, m.t, "", 260); });
+    html += `</div>`;
+  }
+  html += `<div class="source-note fade-in">Data from SEC filings (10-K, 10-Q), HKEX filings, company annual reports & investor presentations (FY2024/FY2025). Revenue in USD billions unless noted. CNY converted at approx rates. Not investment advice. 数据来源：SEC文件、港交所公告及公司年报。仅供参考，不构成投资建议。</div>`;
+
+  document.getElementById("app").innerHTML = html;
+
+  setTimeout(() => {
+    if (currentSub === "financials") {
+      makeChart("co_rev","bar",c.revH.l,[{label:"Revenue ($B)",data:c.revH.d,backgroundColor:SC[t]+"bb",borderRadius:4}]);
+      makeChart("co_seg","doughnut",c.seg.l,[{data:c.seg.d,backgroundColor:PIES.slice(0,c.seg.l.length),borderWidth:0}],{legend:true});
+    } else {
+      c.moats.forEach((m,i) => {
+        const id = "moat_"+i;
+        if (m.type === "doughnut") {
+          makeChart(id,"doughnut",m.l,[{data:m.d,backgroundColor:m.c,borderWidth:0}],{legend:true});
+        } else if (m.type === "hbar") {
+          makeChart(id,"hbar",m.l,[{label:m.t.split(" ")[0],data:m.d,backgroundColor:m.c+"bb",borderRadius:4}]);
+        } else {
+          makeChart(id,m.type,m.l,[{
+            label:m.t.split(" ")[0], data:m.d,
+            ...(m.type==="line" ? {borderColor:m.c,backgroundColor:m.c+"22",fill:true,tension:.3,pointRadius:4,pointBackgroundColor:m.c} : {backgroundColor:m.c+"bb",borderRadius:4}),
+          }]);
+        }
+      });
+    }
+  }, 50);
+}
+
+function renderCompare() {
+  const metrics = [
+    {k:"pe",l:"P/E Ratio 市盈率"},{k:"roe",l:"ROE 净资产收益率"},{k:"dy",l:"Dividend Yield 股息率"},
+    {k:"de",l:"Debt/Equity 负债比"},{k:"mc",l:"Market Cap ($B) 市值"},{k:"rev",l:"Revenue ($B) 营收"},
+  ];
+  let html = `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px" class="fade-in">`;
+  metrics.forEach(m => {
+    html += `<button class="sub-tab ${window._cmpMetric===m.k?"on":""}" onclick="switchMetric('${m.k}')">${m.l}</button>`;
+  });
+  html += `</div>`;
+  html += `<div class="fade-in">${chartCard("cmp_bar","Cross-Company Comparison","跨公司对比",400)}</div>`;
+  html += `<div class="fade-in">${chartCard("cmp_radar","Quality Radar — All 10 Picks","质量雷达图",380)}</div>`;
+  document.getElementById("app").innerHTML = html;
+
+  const mk = window._cmpMetric || "pe";
+  const sorted = TK.map(t=>({t,v:D[t][mk],n:D[t].name.split(" ")[0]})).sort((a,b)=>b.v-a.v);
+
+  setTimeout(() => {
+    makeChart("cmp_bar","bar", sorted.map(s=>s.n), [{
+      label: metrics.find(m=>m.k===mk).l,
+      data: sorted.map(s=>s.v),
+      backgroundColor: sorted.map(s=>SC[s.t]+"cc"),
+      borderRadius: 4,
+    }]);
+    // Radar
+    const radarData = TK.map(t => ({
+      pe: Math.max(0, 30-D[t].pe), roe: D[t].roe, dy: D[t].dy * 5
+    }));
+    makeChart("cmp_radar","radar", TK.map(t=>D[t].name.split(" ")[0]), [
+      { label:"Value (30-PE)", data:radarData.map(r=>r.pe), borderColor:"#4f8ff7", backgroundColor:"rgba(79,143,247,.1)", pointBackgroundColor:"#4f8ff7" },
+      { label:"ROE (%)", data:radarData.map(r=>r.roe), borderColor:"#34d399", backgroundColor:"rgba(52,211,153,.08)", pointBackgroundColor:"#34d399" },
+      { label:"Yield (×5)", data:radarData.map(r=>r.dy), borderColor:"#f0a830", backgroundColor:"rgba(240,168,48,.08)", pointBackgroundColor:"#f0a830" },
+    ], { legend: true });
+  }, 50);
+}
+
+// ===== NAVIGATION =====
+window._cmpMetric = "pe";
+
+function switchTab(tab) {
+  currentTab = tab;
+  destroyCharts();
+  document.querySelectorAll(".tab").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+  render();
+}
+window.goCompany = function(t) { currentTicker = t; currentSub = "financials"; switchTab("company"); };
+window.switchSub = function(s) { currentSub = s; destroyCharts(); renderCompany(); };
+window.switchMetric = function(k) { window._cmpMetric = k; destroyCharts(); renderCompare(); };
+
+function render() {
+  if (currentTab === "overview") renderOverview();
+  else if (currentTab === "company") renderCompany();
+  else if (currentTab === "compare") renderCompare();
+}
+
+document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+render();
+</script>
+</body>
+</html>
