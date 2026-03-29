@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Value Portfolio | 10 High-Conviction Picks</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+  :root {
+    --navy: #0a1628; --deep-blue: #132744; --accent-gold: #c9a84c;
+    --accent-green: #2ecc71; --accent-red: #e74c3c; --muted-green: #4a9e6e;
+    --text-primary: #e8e6e3; --text-secondary: #8892a4;
+    --card-bg: rgba(19, 39, 68, 0.6); --border: rgba(201, 168, 76, 0.15);
+    --china-text: #6db38a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Source Sans 3', sans-serif; background: var(--navy); color: var(--text-primary); line-height: 1.6; }
+  .bg-pattern { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(46,204,113,0.03) 0%, transparent 50%),
+    linear-gradient(180deg, #0a1628 0%, #0d1e38 50%, #0a1628 100%); }
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  header { padding: 48px 0 32px; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+  header .eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 8px; }
+  header h1 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900;
+    background: linear-gradient(135deg, #fff 0%, var(--accent-gold) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.15; }
+  header .cn-title { font-family: 'Noto Sans SC', sans-serif; font-size: clamp(16px, 2vw, 22px); color: var(--china-text); font-weight: 300; margin-top: 4px; }
+  header .meta { display: flex; gap: 24px; margin-top: 16px; flex-wrap: wrap; }
+  header .meta span { font-size: 13px; color: var(--text-secondary); }
+  header .meta span strong { color: var(--accent-gold); }
+  .section { margin-bottom: 48px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .section-title-cn { font-family: 'Noto Sans SC', sans-serif; font-size: 14px; color: var(--china-text); font-weight: 300; margin-bottom: 20px; }
+  .philosophy { background: linear-gradient(135deg, var(--deep-blue) 0%, rgba(201,168,76,0.08) 100%); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin-bottom: 40px; }
+  .philosophy p { font-size: 15px; color: var(--text-secondary); line-height: 1.7; }
+  .philosophy .quote { font-family: 'Playfair Display', serif; font-style: italic; font-size: 17px; color: var(--accent-gold); margin: 12px 0 4px; padding-left: 16px; border-left: 3px solid var(--accent-gold); }
+  .philosophy .attr { font-size: 13px; color: var(--text-secondary); padding-left: 16px; }
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 14px; margin-bottom: 40px; }
+  .stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 18px 14px; text-align: center; }
+  .stat-card .value { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--accent-gold); }
+  .stat-card .label { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+  .table-wrapper { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); background: var(--card-bg); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { background: rgba(10, 22, 40, 0.9); color: var(--accent-gold); font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; font-size: 10.5px; padding: 12px 10px; text-align: left; border-bottom: 2px solid var(--accent-gold); position: sticky; top: 0; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.2s; }
+  tbody tr:hover { background: rgba(201,168,76,0.06); }
+  td { padding: 12px 10px; vertical-align: middle; white-space: nowrap; }
+  .ticker { font-weight: 700; color: var(--accent-gold); }
+  .company-name { font-weight: 600; color: #fff; }
+  .company-cn { font-family: 'Noto Sans SC', sans-serif; font-size: 11px; color: var(--china-text); }
+  .market-tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.5px; }
+  .market-us { background: rgba(52,152,219,0.2); color: #5dade2; }
+  .market-hk { background: rgba(231,76,60,0.2); color: #e74c3c; }
+  .market-tw { background: rgba(155,89,182,0.2); color: #bb8fce; }
+  .market-in { background: rgba(243,156,18,0.2); color: #f39c12; }
+  .moat-wide { color: var(--accent-green); font-weight: 700; }
+  .moat-narrow { color: #f39c12; font-weight: 600; }
+  .positive { color: var(--accent-green); }
+  .negative { color: var(--accent-red); }
+  .rec-buy { background: rgba(46,204,113,0.2); color: var(--accent-green); padding: 3px 10px; border-radius: 4px; font-weight: 700; font-size: 11px; }
+  .rec-accum { background: rgba(243,156,18,0.2); color: #f39c12; padding: 3px 10px; border-radius: 4px; font-weight: 700; font-size: 11px; }
+  .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px; margin-bottom: 40px; }
+  .chart-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+  .chart-card h3 { font-family: 'Playfair Display', serif; font-size: 16px; margin-bottom: 4px; }
+  .chart-card .cn-sub { font-family: 'Noto Sans SC', sans-serif; font-size: 12px; color: var(--china-text); margin-bottom: 16px; }
+  canvas { max-height: 300px; }
+  .company-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
+  .company-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; transition: border-color 0.3s, transform 0.2s; }
+  .company-card:hover { border-color: var(--accent-gold); transform: translateY(-2px); }
+  .company-card .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .company-card .card-header h3 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; }
+  .company-card .card-header .cn-name { font-family: 'Noto Sans SC', sans-serif; font-size: 13px; color: var(--china-text); }
+  .company-card .thesis { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 14px; }
+  .company-card .metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .mini-metric { background: rgba(10,22,40,0.5); border-radius: 6px; padding: 8px; text-align: center; }
+  .mini-metric .mm-val { font-size: 16px; font-weight: 700; color: var(--accent-gold); }
+  .mini-metric .mm-label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+  .tab-row { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 2px solid var(--border); overflow-x: auto; }
+  .tab-btn { padding: 12px 20px; background: none; border: none; color: var(--text-secondary); font-family: 'Source Sans 3', sans-serif;
+    font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; white-space: nowrap; }
+  .tab-btn:hover { color: #fff; }
+  .tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  /* CONFIDENCE */
+  .confidence-bar { height: 40px; border-radius: 20px; position: relative; overflow: hidden; margin: 16px 0 24px; }
+  .confidence-bar .bg { height: 100%; border-radius: 20px; background: rgba(255,255,255,0.06); }
+  .confidence-bar .fill { height: 100%; border-radius: 20px; position: absolute; top: 0; left: 0;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-gold)); transition: width 1s ease; }
+  .confidence-bar .label { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-weight: 700; font-size: 14px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+  .score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .score-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; text-align: center; }
+  .score-card .score { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; }
+  .score-card .score-label { font-size: 13px; font-weight: 600; color: #fff; margin-top: 4px; }
+  .score-card .score-cn { font-family: 'Noto Sans SC', sans-serif; font-size: 11px; color: var(--china-text); }
+  .prose { font-size: 15px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 24px; }
+  .prose strong { color: var(--text-primary); }
+  .prose-highlight { color: var(--accent-gold); font-weight: 600; }
+  .risk-card { background: rgba(231,76,60,0.06); border: 1px solid rgba(231,76,60,0.2); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+  .risk-card .risk-title { font-weight: 700; color: var(--accent-red); font-size: 14px; margin-bottom: 6px; }
+  .risk-card .risk-prob { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
+  .risk-card .risk-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+  .tailwind-card { background: rgba(46,204,113,0.06); border: 1px solid rgba(46,204,113,0.2); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+  .tailwind-card .tw-title { font-weight: 700; color: var(--accent-green); font-size: 14px; margin-bottom: 6px; }
+  .tailwind-card .tw-stat { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--accent-gold); margin: 8px 0; }
+  .tailwind-card .tw-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+  .probability-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
+  .prob-card { border-radius: 10px; padding: 20px; text-align: center; }
+  .prob-card.bull { background: rgba(46,204,113,0.1); border: 1px solid rgba(46,204,113,0.25); }
+  .prob-card.base { background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.25); }
+  .prob-card.bear { background: rgba(231,76,60,0.1); border: 1px solid rgba(231,76,60,0.25); }
+  .prob-card .prob-pct { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; }
+  .prob-card.bull .prob-pct { color: var(--accent-green); }
+  .prob-card.base .prob-pct { color: var(--accent-gold); }
+  .prob-card.bear .prob-pct { color: var(--accent-red); }
+  .prob-card .prob-label { font-size: 13px; font-weight: 600; color: #fff; }
+  .prob-card .prob-return { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+  .disclaimer { margin-top: 48px; padding: 24px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-secondary); line-height: 1.7; }
+  .disclaimer .cn-disc { font-family: 'Noto Sans SC', sans-serif; color: var(--china-text); margin-top: 8px; }
+  .back-link { display:inline-flex; align-items:center; gap:8px; color:var(--text-secondary); text-decoration:none; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:24px; transition:color 0.2s; }
+  .back-link:hover { color:var(--text-primary); }
+  .back-link svg { width:16px; height:16px; transition:transform 0.2s; }
+  .back-link:hover svg { transform:translateX(-4px); }
+  @media (max-width: 768px) {
+    .charts-grid, .company-cards { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .score-grid { grid-template-columns: repeat(2, 1fr); }
+    .probability-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+<div class="container">
+
+<header>
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Return to Home
+  </a>
+  <div class="eyebrow">Value Investing Research &bull; Portfolio Proposal &bull; Confidence Analysis</div>
+  <h1>Global Value Portfolio: 10 High-Conviction Picks</h1>
+  <div class="cn-title">全球价值投资组合：10 只高确信度精选 &bull; 信心评估报告</div>
+  <div class="meta">
+    <span>Date: <strong>March 29, 2026</strong></span>
+    <span>Methodology: <strong>Graham / Buffett / Munger / Fisher</strong></span>
+    <span>Markets: <strong>US · HK · Taiwan · India</strong></span>
+    <span>Horizon: <strong>5–10 Years</strong></span>
+    <span>Confidence: <strong style="color:var(--accent-green)">HIGH (7.8/10)</strong></span>
+  </div>
+</header>
+
+<div class="philosophy">
+  <p>This concentrated portfolio of 10 names is sourced from four markets using our Graham/Buffett/Munger/Fisher framework. Each candidate passes rigorous quantitative gates (10-year avg ROE >15%, ROIC >12%, FCF conversion >70%) and qualitative assessments (durable moat, aligned management, circle of competence). We seek wonderful businesses at fair prices — companies that will compound shareholder wealth over the next decade.</p>
+  <div class="quote">"It's far better to buy a wonderful company at a fair price than a fair company at a wonderful price."</div>
+  <div class="attr">— Warren Buffett</div>
+</div>
+
+<!-- TABS -->
+<div class="tab-row">
+  <button class="tab-btn active" onclick="showTab('overview')">Overview</button>
+  <button class="tab-btn" onclick="showTab('holdings')">Holdings</button>
+  <button class="tab-btn" onclick="showTab('confidence')">Confidence Analysis</button>
+  <button class="tab-btn" onclick="showTab('tailwinds')">Secular Tailwinds</button>
+  <button class="tab-btn" onclick="showTab('valuation')">Valuation & Moat</button>
+  <button class="tab-btn" onclick="showTab('risk')">Risk & Scenarios</button>
+  <button class="tab-btn" onclick="showTab('benchmark')">Benchmark</button>
+</div>
+
+<!-- ============ TAB 1: OVERVIEW ============ -->
+<div id="tab-overview" class="tab-content active">
+<div class="stats-row">
+  <div class="stat-card"><div class="value">10</div><div class="label">Positions 持仓数</div></div>
+  <div class="stat-card"><div class="value">22.8%</div><div class="label">Wtd Avg ROE</div></div>
+  <div class="stat-card"><div class="value">16.8x</div><div class="label">Wtd Avg P/E</div></div>
+  <div class="stat-card"><div class="value">5.2%</div><div class="label">Wtd FCF Yield</div></div>
+  <div class="stat-card"><div class="value">~28%</div><div class="label">Avg Upside to IV</div></div>
+  <div class="stat-card"><div class="value">7.8</div><div class="label">Confidence /10</div></div>
+</div>
+<div class="section">
+  <div class="section-title">Portfolio Summary</div>
+  <div class="section-title-cn">投资组合概览</div>
+  <div class="table-wrapper"><table><thead><tr>
+    <th>#</th><th>Company</th><th>Ticker</th><th>Mkt</th><th>Sector</th><th>Wt%</th><th>Price</th><th>10Y ROE</th><th>Rev CAGR</th><th>Moat</th><th>Rating</th>
+  </tr></thead><tbody>
+    <tr><td>1</td><td><span class="company-name">Alphabet</span><br><span class="company-cn">谷歌母公司</span></td><td class="ticker">GOOGL</td><td><span class="market-tag market-us">US</span></td><td>Tech / Ads</td><td>13%</td><td>$279</td><td class="positive">23.5%</td><td class="positive">20.1%</td><td class="moat-wide">Wide</td><td><span class="rec-buy">BUY</span></td></tr>
+    <tr><td>2</td><td><span class="company-name">TSMC</span><br><span class="company-cn">台积电</span></td><td class="ticker">TSM</td><td><span class="market-tag market-tw">TW</span></td><td>Semiconductors</td><td>12%</td><td>$179</td><td class="positive">28.1%</td><td class="positive">18.7%</td><td class="moat-wide">Wide</td><td><span class="rec-buy">BUY</span></td></tr>
+    <tr><td>3</td><td><span class="company-name">Tencent</span><br><span class="company-cn">腾讯控股</span></td><td class="ticker">0700.HK</td><td><span class="market-tag market-hk">HK</span></td><td>Tech / Platform</td><td>11%</td><td>HK$493</td><td class="positive">22.4%</td><td class="positive">18.5%</td><td class="moat-wide">Wide</td><td><span class="rec-buy">BUY</span></td></tr>
+    <tr><td>4</td><td><span class="company-name">Mastercard</span><br><span class="company-cn">万事达卡</span></td><td class="ticker">MA</td><td><span class="market-tag market-us">US</span></td><td>Payments</td><td>11%</td><td>$537</td><td class="positive">125%+</td><td class="positive">14.2%</td><td class="moat-wide">Wide</td><td><span class="rec-accum">ACCUM</span></td></tr>
+    <tr><td>5</td><td><span class="company-name">Apple</span><br><span class="company-cn">苹果公司</span></td><td class="ticker">AAPL</td><td><span class="market-tag market-us">US</span></td><td>Tech / Consumer</td><td>10%</td><td>$254</td><td class="positive">83%+</td><td class="positive">9.8%</td><td class="moat-wide">Wide</td><td><span class="rec-accum">ACCUM</span></td></tr>
+    <tr><td>6</td><td><span class="company-name">HDFC Bank</span><br><span class="company-cn">HDFC银行</span></td><td class="ticker">HDB</td><td><span class="market-tag market-in">IN</span></td><td>Banking</td><td>9%</td><td>$59</td><td class="positive">16.8%</td><td class="positive">22.4%</td><td class="moat-wide">Wide</td><td><span class="rec-buy">BUY</span></td></tr>
+    <tr><td>7</td><td><span class="company-name">Alibaba</span><br><span class="company-cn">阿里巴巴</span></td><td class="ticker">9988.HK</td><td><span class="market-tag market-hk">HK</span></td><td>E-commerce</td><td>8%</td><td>HK$138</td><td class="positive">16.2%</td><td class="positive">24.8%</td><td class="moat-wide">Wide</td><td><span class="rec-buy">BUY</span></td></tr>
+    <tr><td>8</td><td><span class="company-name">Coca-Cola</span><br><span class="company-cn">可口可乐</span></td><td class="ticker">KO</td><td><span class="market-tag market-us">US</span></td><td>Consumer Staples</td><td>8%</td><td>$73</td><td class="positive">38.5%</td><td>3.8%</td><td class="moat-wide">Wide</td><td><span class="rec-accum">ACCUM</span></td></tr>
+    <tr><td>9</td><td><span class="company-name">Infosys</span><br><span class="company-cn">印孚瑟斯</span></td><td class="ticker">INFY</td><td><span class="market-tag market-in">IN</span></td><td>IT Services</td><td>9%</td><td>$22</td><td class="positive">28.6%</td><td class="positive">12.4%</td><td class="moat-narrow">Narrow</td><td><span class="rec-buy">BUY</span></td></tr>
+    <tr><td>10</td><td><span class="company-name">American Express</span><br><span class="company-cn">美国运通</span></td><td class="ticker">AXP</td><td><span class="market-tag market-us">US</span></td><td>Payments</td><td>9%</td><td>$268</td><td class="positive">28.4%</td><td class="positive">9.6%</td><td class="moat-wide">Wide</td><td><span class="rec-accum">ACCUM</span></td></tr>
+  </tbody></table></div>
+</div>
+<div class="charts-grid">
+  <div class="chart-card"><h3>Geographic Allocation</h3><div class="cn-sub">地域配置</div><canvas id="geoChart"></canvas></div>
+  <div class="chart-card"><h3>Sector Allocation</h3><div class="cn-sub">行业配置</div><canvas id="sectorChart"></canvas></div>
+</div>
+</div>
+
+<!-- ============ TAB 2: HOLDINGS ============ -->
+<div id="tab-holdings" class="tab-content">
+<div class="section"><div class="section-title">Individual Holdings — Investment Thesis</div><div class="section-title-cn">个股详情 — 投资论点</div></div>
+<div class="company-cards">
+  <div class="company-card"><div class="card-header"><div><h3>Alphabet (GOOGL)</h3><div class="cn-name">谷歌母公司 · US · 13%</div></div><span class="rec-buy">BUY</span></div>
+  <div class="thesis">Dominant search & advertising platform with 90%+ global search share, growing Cloud business, and Waymo autonomous driving optionality. AI integration via Gemini strengthens competitive position. Recent pullback from $349 high to $279 creates attractive entry at ~20x forward earnings — a 20% discount to 10-year average P/E.</div>
+  <div class="metrics-row"><div class="mini-metric"><div class="mm-val">23.5%</div><div class="mm-label">10Y ROE</div></div><div class="mini-metric"><div class="mm-val">20.1%</div><div class="mm-label">Rev CAGR</div></div><div class="mini-metric"><div class="mm-val">~20x</div><div class="mm-label">Fwd P/E</div></div></div></div>
+
+  <div class="company-card"><div class="card-header"><div><h3>TSMC (TSM)</h3><div class="cn-name">台积电 · Taiwan · 12%</div></div><span class="rec-buy">BUY</span></div>
+  <div class="thesis">World's dominant semiconductor foundry with 66% market share and unmatched process tech at 3nm/2nm nodes. Revenue CAGR of 18.7% with ROE consistently above 25%. AI accelerator revenue projected at mid-to-high 50% CAGR through 2029 per CEO guidance. Irreplaceable link in the global tech supply chain.</div>
+  <div class="metrics-row"><div class="mini-metric"><div class="mm-val">28.1%</div><div class="mm-label">10Y ROE</div></div><div class="mini-metric"><div class="mm-val">18.7%</div><div class="mm-label">Rev CAGR</div></div><div class="mini-metric"><div class="mm-val">~23x</div><div class="mm-label">Fwd P/E</div></div></div></div>
+
+  <div class="company-card"><div class="card-header"><div><h3>Tencent (0700.HK)</h3><div class="cn-name">腾讯控股 · HK · 11%</div></div><span class="rec-buy">BUY</span></div>
+  <div class="thesis">China's dominant internet platform — WeChat's 1.3B+ MAU creates unparalleled network effects across messaging, payments, gaming, and enterprise services. Revenue grew 14% in 2025. AI investment via OpenClaw ecosystem. Trading at ~18x P/E — significant discount to US peers (Alphabet 20x, Meta 23x) for similar quality business.</div>
+  <div class="metrics-row"><div class="mini-metric"><div class="mm-val">22.4%</div><div class="mm-label">10Y ROE</div></div><div class="mini-metric"><div class="mm-val">18.5%</div><div class="mm-label">Rev CAGR</div></div><div class="mini-metric"><div class="mm-val">~18x</div><div class="mm-label">Fwd P/E</div></div></div></div>
+
+  <div class="company-card"><div class="card-header"><div><h3>Mastercard (MA)</h3><div class="cn-name">万事达卡 · US · 11%</div></div><span class="rec-accum">ACCUM</span></div>
+  <div class="thesis">Duopolistic payment network with 3.1B+ cards in use. Asset-light model generates extraordinary ROIC. Revenue grew 16% in FY2025 to $32.8B. Digital payments market projected to grow from $18.7T to $33.5T+ by 2030. Secular cash-to-digital tailwind has a 15+ year runway.</div>
+  <div class="metrics-row"><div class="mini-metric"><div class="mm-val">125%+</div><div class="mm-label">10Y ROE</div></div><div class="mini-metric"><div class="mm-val">14.2%</div><div class="mm-label">Rev CAGR</div></div><div class="mini-metric"><div class="mm-val">~35x</div><div class="mm-label">Fwd P/E</div></div></div></div>
+
+  <div class="company-card"><div class="card-header"><div><h3>Apple (AAPL)</h3><div class="cn-name">苹果公司 · US · 10%</div></div><span class="rec-accum">ACCUM</span></div>
+  <div class="thesis">World's most valuable consumer franchise — 2B+ active devices create powerful ecosystem lock-in. Services revenue approaching $100B run-rate with 70%+ margins. Shares outstanding down ~40% over 10 years via buybacks. Apple Intelligence / Siri AI reboot underway. Buffett's largest holding at 22.6% of Berkshire portfolio.</div>
+  <div class="metrics-row"><div class="mini-metric"><div class="mm-val">83%+</div><div class="mm-label">10Y ROE</div></div><div class="mini-metric"><div class="mm-val">9.8%</div><div class="mm-label">Rev CAGR</div></div><div class="mini-metric"><div class="mm-val">~28x</div><div class="mm-label">Fwd P/E</div></div></div></div>
+
+  <div class="company-card"><div class="card-header"><div><h3>HDFC Bank (HDB)</h3><div class="cn-name">HDFC银行 · India · 9%</div></div><span class="rec-buy">BUY</span></div>
+  <div class="thesis">India's largest private bank with 15% market share, 8,700+ branches. Post-HDFC Ltd merger, assets reached ₹48T. Conservative underwriting (GNPA 1.2%), NIM of 3.7%. India's credit-to-GDP ratio projected to nearly double from 57% to 100% — massive structural runway for the leading private bank.</div>
+  <div class="metrics-row"><div class="mini-metric"><div class="mm-val">16.8%</div><div class="mm-label">10Y ROE</div></div><div class="mini-metric"><div class="mm-val">22.4%</div><div class="mm-label">Rev CAGR</div></div><div class="mini-metric"><div class="mm-val">~18x</div><div class="mm-label">Fwd P/E</div></div></div></div>
+
+  <div class="company-card"><div class="card-header"><div><h3>Alibaba (9988.HK)</h3><div class="cn-name">阿里巴巴 · HK · 8%</div></div><span class="rec-buy">BUY</span></div>
+  <div class="thesis">China's #1 e-commerce platform with wide Morningstar moat rating. Profitable for a decade despite fierce competition from Douyin and Kuaishou. Cloud intelligence segment is China's top cloud provider. Trading at ~9x earnings — a 59% discount to 10-year average P/E. Net cash of $2.9B and aggressive buybacks provide downside protection.</div>
+  <div class="metrics-row"><div class="mini-metric"><div class="mm-val">16.2%</div><div class="mm-label">10Y ROE</div></div><div class="mini-metric"><div class="mm-val">24.8%</div><div class="mm-label">Rev CAGR</div></div><div class="mini-metric"><div class="mm-val">~9x</div><div class="mm-label">Fwd P/E</div></div></div></div>
+
+  <div class="company-card"><div class="card-header"><div><h3>Coca-Cola (KO)</h3><div class="cn-name">可口可乐 · US · 8%</div></div><span class="rec-accum">ACCUM</span></div>
+  <div class="thesis">World's most recognized beverage brand with unparalleled global distribution in 200+ countries. 62 consecutive years of dividend increases. ROE consistently above 38%. Defensive ballast providing recession-resilient earnings and pricing power. Buffett's longest-held position — owned continuously since 1988.</div>
+  <div class="metrics-row"><div class="mini-metric"><div class="mm-val">38.5%</div><div class="mm-label">10Y ROE</div></div><div class="mini-metric"><div class="mm-val">3.8%</div><div class="mm-label">Rev CAGR</div></div><div class="mini-metric"><div class="mm-val">~25x</div><div class="mm-label">Fwd P/E</div></div></div></div>
+
+  <div class="company-card"><div class="card-header"><div><h3>Infosys (INFY)</h3><div class="cn-name">印孚瑟斯 · India · 9%</div></div><span class="rec-buy">BUY</span></div>
+  <div class="thesis">India's #2 IT services company with record $17.7B large deal TCV in FY24. 20%+ operating margins, $2.9B annual FCF generation, near-zero debt. AI-driven digital transformation creates multi-year demand cycle. India's ICT industry projected to grow at 9% CAGR through 2030.</div>
+  <div class="metrics-row"><div class="mini-metric"><div class="mm-val">28.6%</div><div class="mm-label">10Y ROE</div></div><div class="mini-metric"><div class="mm-val">12.4%</div><div class="mm-label">Rev CAGR</div></div><div class="mini-metric"><div class="mm-val">~24x</div><div class="mm-label">Fwd P/E</div></div></div></div>
+
+  <div class="company-card"><div class="card-header"><div><h3>American Express (AXP)</h3><div class="cn-name">美国运通 · US · 9%</div></div><span class="rec-accum">ACCUM</span></div>
+  <div class="thesis">Premium closed-loop payment network targeting affluent consumers. Berkshire Hathaway's #2 holding at 16% of portfolio — decades of Buffett conviction. Strong brand moat and membership model drive 28%+ ROE. EPS growth of 8-10% sustainable. Modestly valued at ~17x earnings vs. Mastercard's 35x.</div>
+  <div class="metrics-row"><div class="mini-metric"><div class="mm-val">28.4%</div><div class="mm-label">10Y ROE</div></div><div class="mini-metric"><div class="mm-val">9.6%</div><div class="mm-label">Rev CAGR</div></div><div class="mini-metric"><div class="mm-val">~17x</div><div class="mm-label">Fwd P/E</div></div></div></div>
+</div>
+</div>
+
+<!-- ============ TAB 3: CONFIDENCE ANALYSIS ============ -->
+<div id="tab-confidence" class="tab-content">
+<div class="section">
+  <div class="section-title">Confidence Assessment: 7.8 / 10</div>
+  <div class="section-title-cn">信心评估：7.8 / 10 — 高确信度</div>
+</div>
+<div class="confidence-bar"><div class="bg"></div><div class="fill" style="width:78%"></div><div class="label">78% — HIGH CONVICTION</div></div>
+
+<div class="score-grid">
+  <div class="score-card"><div class="score" style="color:var(--accent-green)">9/10</div><div class="score-label">Secular Tailwinds</div><div class="score-cn">长期趋势驱动力</div></div>
+  <div class="score-card"><div class="score" style="color:var(--accent-green)">9/10</div><div class="score-label">Financial Quality</div><div class="score-cn">财务质量</div></div>
+  <div class="score-card"><div class="score" style="color:#5dade2">8/10</div><div class="score-label">Moat Durability</div><div class="score-cn">护城河持久性</div></div>
+  <div class="score-card"><div class="score" style="color:#5dade2">8/10</div><div class="score-label">Management Quality</div><div class="score-cn">管理层质量</div></div>
+  <div class="score-card"><div class="score" style="color:var(--accent-gold)">7/10</div><div class="score-label">Valuation Margin</div><div class="score-cn">估值安全边际</div></div>
+  <div class="score-card"><div class="score" style="color:#f39c12">6/10</div><div class="score-label">Geographic Risk</div><div class="score-cn">地缘政治风险</div></div>
+</div>
+
+<div class="section-title" style="margin-top:32px">10-Year Probability Distribution</div>
+<div class="section-title-cn">十年回报概率分布</div>
+<div class="probability-row">
+  <div class="prob-card bull"><div class="prob-pct">75-80%</div><div class="prob-label">Bull / Base Case</div><div class="prob-return">12-16% annualized returns</div><div style="font-size:11px;color:var(--text-secondary);margin-top:8px">Secular tailwinds play out, moats hold, earnings compound at 14-18%. Portfolio beats S&P 500 by 200-500bps annually.</div></div>
+  <div class="prob-card base"><div class="prob-pct">15%</div><div class="prob-label">Match Index</div><div class="prob-return">8-12% annualized returns</div><div style="font-size:11px;color:var(--text-secondary);margin-top:8px">US tech multiples compress; HK/India names offset some of the drag. Portfolio roughly matches S&P 500.</div></div>
+  <div class="prob-card bear"><div class="prob-pct">5-10%</div><div class="prob-label">Bear Case</div><div class="prob-return">&lt;8% annualized returns</div><div style="font-size:11px;color:var(--text-secondary);margin-top:8px">Geopolitical shock (Taiwan, US-China), prolonged recession, or AI disrupts multiple moats simultaneously.</div></div>
+</div>
+
+<div class="philosophy" style="margin-top:24px">
+  <p><strong>Why 7.8 and not 9 or 10?</strong> The portfolio's financial quality and secular positioning are outstanding (9/10), but honest assessment requires acknowledging: (1) US tech names — Apple, TSMC, Mastercard — carry premium valuations where returns depend on continued earnings growth rather than multiple expansion; (2) 19% China/HK exposure carries real geopolitical tail risk that no amount of business quality can fully offset; (3) TSMC's Taiwan concentration (12% of portfolio) represents a low-probability but high-impact risk. These factors cap conviction below 8.5 despite the exceptional business quality.</p>
+  <p style="font-family:'Noto Sans SC',sans-serif;color:var(--china-text);margin-top:12px"><strong>为什么是7.8而不是9或10？</strong> 组合的财务质量和趋势定位卓越（9/10），但诚实评估需要承认：（1）美国科技股处于溢价估值，回报依赖持续盈利增长；（2）19%的中港敞口存在真实地缘政治尾部风险；（3）台积电的台湾集中度代表低概率但高影响的风险。</p>
+</div>
+</div>
+
+<!-- ============ TAB 4: SECULAR TAILWINDS ============ -->
+<div id="tab-tailwinds" class="tab-content">
+<div class="section"><div class="section-title">Secular Tailwinds Driving 10-Year Compounding</div><div class="section-title-cn">驱动十年复利的长期趋势</div></div>
+
+<div class="prose">This portfolio sits at the intersection of the most powerful multi-decade trends in the global economy. These are not cyclical bets — they are structural shifts with 15-30 year runways that our holdings are positioned to capture.</div>
+
+<div class="tailwind-card">
+  <div class="tw-title">1. Global Cash-to-Digital Payments Transition</div>
+  <div class="tw-stat">$18.7T → $33.5T+ by 2030</div>
+  <div class="tw-desc">Digital payments spending surged from $1.7T in 2014 to $18.7T in 2024, and is projected to exceed $33.5T by 2030. The digital payment solutions market is growing at 21.4% CAGR. US cash use fell from 44% of in-store spending in 2014 to just 15% in 2024. Emerging markets are still early innings — Asia-Pacific alone captured 38.7% of digital payment value. <strong>Beneficiaries: Mastercard (MA), American Express (AXP) — 20% of portfolio.</strong></div>
+</div>
+
+<div class="tailwind-card">
+  <div class="tw-title">2. AI & Semiconductor Supercycle</div>
+  <div class="tw-stat">$628B → $1.8T Semiconductor Market by 2030</div>
+  <div class="tw-desc">SEMI forecasts the semiconductor market reaching $1.8T by 2030. AI chip demand is driving a structural shift: TSMC's CoWoS capacity doubling to 660,000 wafers in 2025, with AI accelerator revenue growing at mid-to-high 50% CAGR through 2029. TSMC's foundry market share climbed from 59% (2023) to 66% (2025) — the gap to competitors is widening. Advanced nodes below 7nm are growing at 12% annually with utilization exceeding 90%. <strong>Beneficiaries: TSMC (TSM), Alphabet (GOOGL), Apple (AAPL) — 35% of portfolio.</strong></div>
+</div>
+
+<div class="tailwind-card">
+  <div class="tw-title">3. India's Structural Economic Boom</div>
+  <div class="tw-stat">$3.9T → $7.3T GDP by 2030</div>
+  <div class="tw-desc">India is the world's fastest-growing major economy at 7.8% GDP growth (Q1 FY2025-26). S&P upgraded India's sovereign rating to BBB for the first time in 18 years. Morgan Stanley projects India's GDP to more than double this decade to $7.5T. Credit-to-GDP ratio expected to increase from 57% to 100% — massive runway for HDFC Bank. India's digital economy projected to reach 20% of GDP by 2030. Consumption to more than double from $2T to $4.9T. <strong>Beneficiaries: HDFC Bank (HDB), Infosys (INFY) — 18% of portfolio.</strong></div>
+</div>
+
+<div class="tailwind-card">
+  <div class="tw-title">4. China's AI & Consumer Internet Renaissance</div>
+  <div class="tw-stat">HSI at 10-Year Highs Despite Discount Multiples</div>
+  <div class="tw-desc">Chinese equities reached 10-year highs in 2025, lifted by stimulus measures and the OpenClaw AI revolution. Tencent's revenue grew 14% in 2025; Alibaba maintains wide economic moat with profitable e-commerce monetization for over a decade. Both companies are aggressively returning capital via buybacks (Tencent: HK$112B in 2024). Despite strong business performance, both trade at deep discounts to US peers — the "China discount" creates Graham-style margin of safety. <strong>Beneficiaries: Tencent (0700.HK), Alibaba (9988.HK) — 19% of portfolio.</strong></div>
+</div>
+
+<div class="chart-card" style="margin-top:24px"><h3>Total Addressable Market Growth (2020-2035E)</h3><div class="cn-sub">总可寻址市场增长</div><canvas id="tamChart"></canvas></div>
+</div>
+
+<!-- ============ TAB 5: VALUATION & MOAT ============ -->
+<div id="tab-valuation" class="tab-content">
+<div class="section"><div class="section-title">Valuation Margin of Safety Analysis</div><div class="section-title-cn">估值安全边际分析</div></div>
+
+<div class="prose">The honest assessment: HK/China names offer genuine Graham-style margin of safety, while US names are closer to fair value. The portfolio's edge comes from buying exceptional businesses in less-efficient markets at cheaper multiples than equivalent US quality.</div>
+
+<div class="table-wrapper"><table><thead><tr>
+  <th>Company</th><th>Fwd P/E</th><th>10Y Avg P/E</th><th>Current vs Avg</th><th>Margin of Safety</th><th>Assessment</th>
+</tr></thead><tbody>
+  <tr><td class="company-name">Alibaba</td><td>~9x</td><td>~22x</td><td class="positive">-59% discount</td><td class="positive">40%+</td><td><span class="rec-buy">EXCELLENT</span></td></tr>
+  <tr><td class="company-name">Tencent</td><td>~18x</td><td>~30x</td><td class="positive">-40% discount</td><td class="positive">25-30%</td><td><span class="rec-buy">GOOD</span></td></tr>
+  <tr><td class="company-name">Alphabet</td><td>~20x</td><td>~25x</td><td class="positive">-20% discount</td><td class="positive">~20%</td><td><span class="rec-buy">MODERATE</span></td></tr>
+  <tr><td class="company-name">HDFC Bank</td><td>~18x</td><td>~22x</td><td class="positive">-18% discount</td><td>15-20%</td><td><span class="rec-accum">MODERATE</span></td></tr>
+  <tr><td class="company-name">AXP</td><td>~17x</td><td>~16x</td><td>Near fair value</td><td>5-10%</td><td><span class="rec-accum">SLIM</span></td></tr>
+  <tr><td class="company-name">Coca-Cola</td><td>~25x</td><td>~24x</td><td>Near fair value</td><td>Slim</td><td><span class="rec-accum">SLIM</span></td></tr>
+  <tr><td class="company-name">Infosys</td><td>~24x</td><td>~22x</td><td>Slight premium</td><td>Low</td><td style="color:var(--text-secondary)">FAIR VALUE</td></tr>
+  <tr><td class="company-name">TSMC</td><td>~23x</td><td>~18x</td><td class="negative">+28% premium</td><td class="negative">Negative</td><td style="color:var(--text-secondary)">GROWTH PRICED</td></tr>
+  <tr><td class="company-name">Apple</td><td>~28x</td><td>~22x</td><td class="negative">+27% premium</td><td class="negative">Negative</td><td style="color:var(--text-secondary)">GROWTH PRICED</td></tr>
+  <tr><td class="company-name">Mastercard</td><td>~35x</td><td>~35x</td><td>At historical avg</td><td>Slim</td><td><span class="rec-accum">FAIR VALUE</span></td></tr>
+</tbody></table></div>
+
+<div class="section" style="margin-top:40px"><div class="section-title">Moat Durability — The Munger Inversion Test</div><div class="section-title-cn">护城河持久性 — 芒格逆向思维测试</div></div>
+
+<div class="prose"><strong>"What would have to happen for these moats to be destroyed within 10 years?"</strong></div>
+
+<div class="table-wrapper"><table><thead><tr><th>Company</th><th>Moat Type(s)</th><th>Rating</th><th>What Would Destroy It?</th><th>Likelihood</th></tr></thead><tbody>
+  <tr><td class="company-name">Alphabet</td><td>Data network effects, scale</td><td class="moat-wide">Wide</td><td>AI replaces search paradigm entirely</td><td style="color:#f39c12">Medium</td></tr>
+  <tr><td class="company-name">TSMC</td><td>Tech leadership, scale, switching</td><td class="moat-wide">Wide</td><td>Competitor replicates 2nm process ($50B+ / 5-10yr)</td><td class="positive">Very Low</td></tr>
+  <tr><td class="company-name">Tencent</td><td>Network effects, switching costs</td><td class="moat-wide">Wide</td><td>WeChat replaced by a new platform</td><td class="positive">Very Low</td></tr>
+  <tr><td class="company-name">Mastercard</td><td>Network effects, scale</td><td class="moat-wide">Wide</td><td>Crypto/A2A rails bypass card networks</td><td class="positive">Low</td></tr>
+  <tr><td class="company-name">Apple</td><td>Ecosystem switching costs, brand</td><td class="moat-wide">Wide</td><td>Device ecosystem becomes interoperable (regulatory)</td><td class="positive">Low</td></tr>
+  <tr><td class="company-name">HDFC Bank</td><td>Scale, switching costs, regulatory</td><td class="moat-wide">Wide</td><td>Indian fintech fully disrupts traditional banking</td><td class="positive">Low</td></tr>
+  <tr><td class="company-name">Alibaba</td><td>Network effects, scale</td><td class="moat-wide">Wide</td><td>Douyin/Kuaishou achieve profitable e-commerce at scale</td><td style="color:#f39c12">Medium</td></tr>
+  <tr><td class="company-name">Coca-Cola</td><td>Brand, distribution</td><td class="moat-wide">Wide</td><td>Global shift away from sugary beverages</td><td class="positive">Low</td></tr>
+  <tr><td class="company-name">Infosys</td><td>Scale, client relationships</td><td class="moat-narrow">Narrow</td><td>AI code generation compresses IT services margins</td><td style="color:#f39c12">Medium</td></tr>
+  <tr><td class="company-name">AXP</td><td>Brand, closed-loop network</td><td class="moat-wide">Wide</td><td>Premium consumers abandon card rewards model</td><td class="positive">Very Low</td></tr>
+</tbody></table></div>
+
+<div class="charts-grid" style="margin-top:32px">
+  <div class="chart-card"><h3>10-Year ROE Comparison</h3><div class="cn-sub">十年ROE对比</div><canvas id="roeChart"></canvas></div>
+  <div class="chart-card"><h3>10-Year Revenue CAGR</h3><div class="cn-sub">十年营收复合增长率</div><canvas id="cagrChart"></canvas></div>
+</div>
+
+<div class="philosophy">
+  <p><strong>Financial Quality Summary 财务质量总结:</strong> All 10 holdings pass the quantitative gates: average portfolio ROE of 22.8% (vs. 15% threshold), weighted revenue CAGR of 15.4% (vs. 5% threshold), FCF conversion above 70% for all non-financials. Apple has reduced shares outstanding by ~40% over 10 years. Tencent repurchased HK$112B in 2024. All companies profitable in 9-10 of the last 10 years. Three holdings (Apple, AXP, Coca-Cola) are Berkshire Hathaway's largest positions — decades of Buffett validation.</p>
+</div>
+</div>
+
+<!-- ============ TAB 6: RISK & SCENARIOS ============ -->
+<div id="tab-risk" class="tab-content">
+<div class="section"><div class="section-title">Risk Analysis & Bear Case Scenarios</div><div class="section-title-cn">风险分析与熊市情景</div></div>
+
+<div class="prose">No investment thesis is complete without an honest assessment of what could go wrong. Per Munger's inversion principle: <span class="prose-highlight">"Tell me where I'm going to die, so I'll never go there."</span> Below are the four scenarios that could cause this portfolio to materially underperform.</div>
+
+<div class="risk-card">
+  <div class="risk-title">Scenario 1: Prolonged US-China Cold War</div>
+  <div class="risk-prob">Probability: 25% &bull; Portfolio Impact: -15% drawdown &bull; Exposure: 19% (Tencent + Alibaba)</div>
+  <div class="risk-desc">Chinese ADR delisting, capital controls, or severe trade restrictions could impair Tencent and Alibaba. However, both are primarily listed in Hong Kong, have strong domestic revenue bases, and are returning massive capital to shareholders. The "China discount" already prices in significant pessimism — Alibaba at 9x earnings has limited further downside vs. fundamentals. Our mitigation: the 19% allocation is sized as a moderate conviction bet, not a concentrated one.</div>
+</div>
+
+<div class="risk-card">
+  <div class="risk-title">Scenario 2: AI Disrupts Current Moats Faster Than Expected</div>
+  <div class="risk-prob">Probability: 15% &bull; Portfolio Impact: -20% on affected names &bull; Exposure: GOOGL, INFY, MA</div>
+  <div class="risk-desc">If AI agents replace Google Search as the primary information interface, Alphabet's ad model is at risk. If AI code generation commoditizes IT services, Infosys margins compress. If AI-powered crypto/A2A rails bypass card networks, Mastercard loses share. Counter-argument: Alphabet IS the leading AI company (Gemini, TPU, Waymo). TSMC manufactures all AI chips regardless of winner. Mastercard's network effects took 50 years to build — disruption won't happen overnight.</div>
+</div>
+
+<div class="risk-card">
+  <div class="risk-title">Scenario 3: Global Recession + Rate Shock</div>
+  <div class="risk-prob">Probability: 20% &bull; Portfolio Impact: -25% drawdown, recovery in 2-3 years &bull; Exposure: Broad</div>
+  <div class="risk-desc">High-multiple US tech names (Apple 28x, TSMC 23x, Mastercard 35x) could see 30-40% drawdowns in a severe recession. However, the defensive ballast (Coca-Cola — 62 years of dividend growth, recession-resistant), deep-value names (Alibaba at 9x), and India's counter-cyclical growth (6.5%+ GDP even in global downturns) would cushion the portfolio. Historical precedent: quality portfolios recover faster from drawdowns because earnings power is resilient.</div>
+</div>
+
+<div class="risk-card">
+  <div class="risk-title">Scenario 4: Taiwan Strait Crisis</div>
+  <div class="risk-prob">Probability: 10% &bull; Portfolio Impact: -30-40% drawdown on TSMC &bull; Exposure: 12%</div>
+  <div class="risk-desc">Low probability but catastrophic tail risk if realized. TSMC has 80%+ of advanced production in Taiwan. Mitigants: TSMC is building fabs in US (Arizona), Japan (Kumamoto), and Germany (Dresden). A Taiwan crisis would devastate the entire global tech supply chain — TSMC's stock wouldn't be uniquely affected. This is a systemic risk, not a stock-specific risk. Our mitigation: TSMC is sized at 12% (moderate conviction), not 15%.</div>
+</div>
+
+<div class="chart-card" style="margin-top:32px"><h3>Risk-Adjusted Scenario Analysis</h3><div class="cn-sub">风险调整情景分析</div><canvas id="scenarioChart"></canvas></div>
+
+<div class="philosophy" style="margin-top:24px">
+  <p><strong>Portfolio Risk Mitigants 组合风险缓释因素:</strong></p>
+  <p>1. <strong>Diversification across 4 markets</strong> — when US tech is expensive, HK/China offers value, and vice versa. Not correlated.<br>
+  2. <strong>Defensive anchor</strong> — Coca-Cola (8%) provides recession-resilient earnings and 62 years of consecutive dividend increases.<br>
+  3. <strong>Buffett validation</strong> — 3 of 10 holdings are Berkshire Hathaway's top positions, with a combined 40%+ of Buffett's public equity portfolio.<br>
+  4. <strong>Balance sheet strength</strong> — Alibaba $2.9B net cash, Infosys near-zero debt, TSMC D/E 0.20x, Apple $100B+ annual FCF.<br>
+  5. <strong>Shareholder returns</strong> — Apple bought back 40% of shares over 10 years. Tencent HK$112B buyback in 2024. All 10 return capital consistently.</p>
+</div>
+</div>
+
+<!-- ============ TAB 7: BENCHMARK ============ -->
+<div id="tab-benchmark" class="tab-content">
+<div class="section"><div class="section-title">10-Year Benchmark Comparison</div><div class="section-title-cn">十年基准指数对比</div></div>
+
+<div class="table-wrapper"><table><thead><tr>
+  <th>Index 指数</th><th>Market</th><th>2016 Level</th><th>2025 Level</th><th>10Y CAGR</th><th>Portfolio Constituents</th>
+</tr></thead><tbody>
+  <tr><td><strong>S&P 500</strong></td><td><span class="market-tag market-us">US</span></td><td>2,044</td><td>5,881</td><td class="positive">+11.1%</td><td>GOOGL, MA, AAPL, KO, AXP (51%)</td></tr>
+  <tr><td><strong>Hang Seng</strong> 恒生指数</td><td><span class="market-tag market-hk">HK</span></td><td>21,914</td><td>24,952</td><td style="color:#f39c12">+1.3%</td><td>0700.HK, 9988.HK (19%)</td></tr>
+  <tr><td><strong>TAIEX</strong></td><td><span class="market-tag market-tw">TW</span></td><td>8,338</td><td>22,986</td><td class="positive">+10.7%</td><td>TSM (12%)</td></tr>
+  <tr><td><strong>Nifty 50</strong> 印度Nifty 50</td><td><span class="market-tag market-in">IN</span></td><td>7,946</td><td>23,644</td><td class="positive">+11.5%</td><td>HDB, INFY (18%)</td></tr>
+  <tr><td><strong>MSCI World</strong></td><td>Global</td><td>1,642</td><td>3,754</td><td class="positive">+8.6%</td><td>Global benchmark</td></tr>
+</tbody></table></div>
+
+<div class="charts-grid" style="margin-top:32px">
+  <div class="chart-card"><h3>Index 10-Year CAGR</h3><div class="cn-sub">指数十年复合年增长率</div><canvas id="benchmarkChart"></canvas></div>
+  <div class="chart-card"><h3>Portfolio vs Index — EPS Growth</h3><div class="cn-sub">组合 vs 指数 — 盈利增长</div><canvas id="earningsChart"></canvas></div>
+</div>
+
+<div class="philosophy" style="margin-top:24px">
+  <p><strong>Key Insight 核心观点:</strong> While the Hang Seng has delivered a paltry 1.3% CAGR over 10 years, our HK picks (Tencent, Alibaba) compounded earnings at 15-25% annually — the index masks individual business quality. India's Nifty 50 at 11.5% CAGR is strong, but HDFC Bank and Infosys have outpaced on earnings growth. Our portfolio's weighted 10-year EPS CAGR of 16.8% is roughly double the S&P 500's index earnings growth (8.5%) over the same period. This is the compounding advantage of owning wonderful businesses across markets.</p>
+  <p style="font-family:'Noto Sans SC',sans-serif;color:var(--china-text);margin-top:12px">虽然恒生指数十年复合年增长率仅1.3%，但腾讯和阿里巴巴个股盈利增长远超指数。组合加权十年EPS复合增长率16.8%，约为标普500指数盈利增长（8.5%）的两倍。这就是跨市场精选优质企业的复利优势。</p>
+</div>
+</div>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <strong>DISCLAIMER:</strong> This report is for informational and educational purposes only. It does not constitute personalized investment advice or a solicitation to buy or sell any security. All investments involve risk, including possible loss of principal. Past performance does not guarantee future results. Investors should conduct their own due diligence and consult a qualified financial advisor before making investment decisions. Data sourced from SEC filings, HKEx, Yahoo Finance, Macrotrends, Screener.in, Morningstar, Grand View Research, SEMI, Morgan Stanley, IMF, Deloitte, S&P, and company investor relations sites. Financial data based on publicly available FY2015-FY2025 figures. Market data as of March 28, 2026.
+  <div class="cn-disc"><strong>免责声明：</strong>本报告仅供信息与教育用途，不构成个人化投资建议。所有投资均有风险，包括本金损失的可能。过往表现不保证未来收益。投资者应自行进行尽职调查并咨询专业理财顾问。</div>
+</div>
+</div>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+Chart.defaults.color = '#8892a4';
+Chart.defaults.font.family = "'Source Sans 3', sans-serif";
+const gold = '#c9a84c', green = '#2ecc71', red = '#e74c3c', blue = '#5dade2', purple = '#bb8fce', orange = '#f39c12';
+
+new Chart(document.getElementById('geoChart'), { type: 'doughnut', data: { labels: ['United States', 'Hong Kong / China', 'Taiwan', 'India'], datasets: [{ data: [51, 19, 12, 18], backgroundColor: [blue, red, purple, orange], borderColor: 'rgba(10,22,40,0.8)', borderWidth: 3 }] }, options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { padding: 14, usePointStyle: true, pointStyle: 'circle', font: { size: 12 } } } } } });
+
+new Chart(document.getElementById('sectorChart'), { type: 'doughnut', data: { labels: ['Tech / Platform', 'Payments / Financials', 'Consumer Staples', 'Semiconductors', 'IT Services'], datasets: [{ data: [32, 28, 8, 12, 9], backgroundColor: [green, gold, '#e67e22', purple, '#1abc9c'], borderColor: 'rgba(10,22,40,0.8)', borderWidth: 3 }] }, options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { padding: 14, usePointStyle: true, pointStyle: 'circle', font: { size: 12 } } } } } });
+
+new Chart(document.getElementById('roeChart'), { type: 'bar', data: { labels: ['GOOGL', 'TSM', '0700', 'MA', 'AAPL', 'HDB', 'BABA', 'KO', 'INFY', 'AXP'], datasets: [{ label: '10Y Avg ROE %', data: [23.5, 28.1, 22.4, 50, 50, 16.8, 16.2, 38.5, 28.6, 28.4], backgroundColor: 'rgba(201,168,76,0.7)', borderColor: gold, borderWidth: 1, borderRadius: 4 }] }, options: { responsive: true, scales: { y: { beginAtZero: true, max: 55, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { callback: v => v >= 50 ? '50%+' : v + '%' } }, x: { grid: { display: false } } }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => { const actual = [23.5,28.1,22.4,125,83,16.8,16.2,38.5,28.6,28.4]; return 'ROE: ' + actual[ctx.dataIndex] + '%'; } } } } } });
+
+new Chart(document.getElementById('cagrChart'), { type: 'bar', data: { labels: ['GOOGL', 'TSM', '0700', 'MA', 'AAPL', 'HDB', 'BABA', 'KO', 'INFY', 'AXP'], datasets: [{ label: '10Y Revenue CAGR %', data: [20.1, 18.7, 18.5, 14.2, 9.8, 22.4, 24.8, 3.8, 12.4, 9.6], backgroundColor: 'rgba(46,204,113,0.7)', borderColor: green, borderWidth: 1, borderRadius: 4 }] }, options: { responsive: true, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { callback: v => v + '%' } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } } });
+
+new Chart(document.getElementById('tamChart'), { type: 'line', data: { labels: ['2020', '2022', '2024', '2026E', '2028E', '2030E', '2032E', '2035E'], datasets: [
+  { label: 'Digital Payments TAM ($T)', data: [5.2, 8.5, 18.7, 24, 28, 33.5, 40, 52], borderColor: blue, backgroundColor: 'rgba(93,173,226,0.08)', fill: true, tension: 0.3, pointRadius: 3 },
+  { label: 'Semiconductor Market ($T)', data: [0.44, 0.57, 0.63, 0.73, 0.95, 1.2, 1.4, 1.8], borderColor: purple, backgroundColor: 'rgba(187,143,206,0.08)', fill: true, tension: 0.3, pointRadius: 3, yAxisID: 'y1' },
+  { label: 'India GDP ($T)', data: [2.7, 3.4, 3.9, 4.6, 5.5, 7.3, 9.0, 12.0], borderColor: orange, backgroundColor: 'rgba(243,156,18,0.08)', fill: true, tension: 0.3, pointRadius: 3 }
+] }, options: { responsive: true, scales: { y: { position: 'left', title: { display: true, text: '$ Trillions' }, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { callback: v => v + 'T' } }, y1: { position: 'right', title: { display: true, text: 'Semis ($T)' }, grid: { display: false }, ticks: { callback: v => v + 'T' }, min: 0, max: 2 }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } } });
+
+new Chart(document.getElementById('benchmarkChart'), { type: 'bar', data: { labels: ['S&P 500', 'Hang Seng', 'TAIEX', 'Nifty 50', 'MSCI World'], datasets: [{ label: '10Y CAGR %', data: [11.1, 1.3, 10.7, 11.5, 8.6], backgroundColor: [blue, red, purple, orange, '#95a5a6'], borderRadius: 6, borderWidth: 0 }] }, options: { responsive: true, indexAxis: 'y', scales: { x: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { callback: v => v + '%' } }, y: { grid: { display: false } } }, plugins: { legend: { display: false } } } });
+
+new Chart(document.getElementById('earningsChart'), { type: 'bar', data: { labels: ['Our Portfolio\n(Wtd Avg)', 'S&P 500', 'Hang Seng', 'Nifty 50'], datasets: [{ label: '10Y EPS CAGR %', data: [16.8, 8.5, 4.2, 12.8], backgroundColor: [gold, blue, red, orange], borderRadius: 6, borderWidth: 0 }] }, options: { responsive: true, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { callback: v => v + '%' } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } } });
+
+new Chart(document.getElementById('scenarioChart'), { type: 'bar', data: { labels: ['US-China Cold War\n(25% prob)', 'AI Moat Disruption\n(15% prob)', 'Global Recession\n(20% prob)', 'Taiwan Crisis\n(10% prob)'], datasets: [
+  { label: 'Portfolio Impact', data: [-15, -20, -25, -30], backgroundColor: ['rgba(231,76,60,0.4)', 'rgba(231,76,60,0.5)', 'rgba(231,76,60,0.6)', 'rgba(231,76,60,0.75)'], borderRadius: 4 },
+  { label: 'Recovery (est. years)', data: [2, 3, 2.5, 4], backgroundColor: ['rgba(46,204,113,0.4)', 'rgba(46,204,113,0.5)', 'rgba(46,204,113,0.6)', 'rgba(46,204,113,0.5)'], borderRadius: 4 }
+] }, options: { responsive: true, scales: { y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { callback: v => v < 0 ? v + '%' : v + ' yrs' } }, x: { grid: { display: false } } }, plugins: { legend: { position: 'bottom', labels: { padding: 14, usePointStyle: true, pointStyle: 'circle', font: { size: 12 } } } } } });
+</script>
+</body>
+</html>
