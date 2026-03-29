@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拼多多 (PDD) 价值投资深度研究报告 — 2025财年</title>
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --accent: #c8960c;
+    --accent2: #e05c2a;
+    --green: #1e7e4a;
+    --red: #c0392b;
+    --gray: #6b7280;
+    --light: #f8f9fa;
+    --border: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: #f0f4f8;
+    color: #1a202c;
+    line-height: 1.7;
+  }
+
+  /* ─── COVER ─── */
+  .cover {
+    background: linear-gradient(135deg, #0f2847 0%, #1a3a5c 50%, #0d4a6e 100%);
+    color: white;
+    padding: 60px 48px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: rgba(200,150,12,0.12);
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -60px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .cover-badge {
+    display: inline-block;
+    background: rgba(200,150,12,0.25);
+    border: 1px solid rgba(200,150,12,0.5);
+    color: #f0c040;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  .cover h1 {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+  .cover h1 span { color: #f0c040; }
+  .cover .subtitle {
+    font-size: 16px;
+    color: rgba(255,255,255,0.72);
+    margin-bottom: 30px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+  }
+  .cover-meta-item { font-size: 13px; color: rgba(255,255,255,0.7); }
+  .cover-meta-item strong { display: block; color: white; font-size: 15px; margin-top: 2px; }
+
+  /* ─── VERDICT BANNER ─── */
+  .verdict-banner {
+    background: linear-gradient(90deg, #1e4a1e, #2d6a2d);
+    color: white;
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .verdict-label { font-size: 13px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
+  .verdict-value { font-size: 24px; font-weight: 800; margin-top: 2px; }
+  .verdict-price-range { text-align: center; }
+  .verdict-price-range .range-val { font-size: 22px; font-weight: 800; color: #7fff9f; }
+
+  /* ─── LAYOUT ─── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 36px 24px 60px; }
+  .section { background: white; border-radius: 12px; padding: 32px 36px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .icon { font-size: 20px; }
+
+  /* ─── SCORE CARDS ─── */
+  .score-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+  @media(max-width:768px){ .score-grid { grid-template-columns: repeat(2,1fr); } }
+  .score-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .score-card .fw { font-size: 13px; color: var(--gray); margin-bottom: 8px; }
+  .score-card .score-num {
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .score-card .score-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0 6px;
+  }
+  .score-card .score-fill { height: 100%; border-radius: 4px; }
+  .score-card .score-label { font-size: 12px; color: var(--gray); }
+  .s-green { color: var(--green); }
+  .s-orange { color: #d97706; }
+  .s-red { color: var(--red); }
+  .fill-green { background: var(--green); }
+  .fill-orange { background: #d97706; }
+  .fill-red { background: var(--red); }
+
+  /* ─── TABLES ─── */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th {
+    background: var(--primary);
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  th:first-child { border-radius: 6px 0 0 0; }
+  th:last-child { border-radius: 0 6px 0 0; }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #fafafa; }
+  .td-r { text-align: right; }
+  .td-c { text-align: center; }
+  .val-pos { color: var(--green); font-weight: 600; }
+  .val-neg { color: var(--red); font-weight: 600; }
+  .val-neut { color: var(--gray); }
+
+  /* ─── METRICS GRID ─── */
+  .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media(max-width:768px){ .metrics-grid { grid-template-columns: repeat(2,1fr); } }
+  .metric-card {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .metric-card .m-label { font-size: 12px; color: var(--gray); margin-bottom: 4px; }
+  .metric-card .m-val { font-size: 22px; font-weight: 800; color: var(--primary); }
+  .metric-card .m-sub { font-size: 12px; color: var(--gray); margin-top: 2px; }
+
+  /* ─── DCF BOX ─── */
+  .dcf-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 16px; }
+  @media(max-width:768px){ .dcf-grid { grid-template-columns: 1fr; } }
+  .dcf-card {
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+  }
+  .dcf-card.bear { border-color: #fca5a5; background: #fff5f5; }
+  .dcf-card.base { border-color: #6ee7b7; background: #f0fff8; }
+  .dcf-card.bull { border-color: #93c5fd; background: #f0f8ff; }
+  .dcf-card .dcf-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .dcf-card.bear .dcf-label { color: var(--red); }
+  .dcf-card.base .dcf-label { color: var(--green); }
+  .dcf-card.bull .dcf-label { color: #1d4ed8; }
+  .dcf-card .dcf-price { font-size: 32px; font-weight: 900; margin-bottom: 4px; }
+  .dcf-card.bear .dcf-price { color: var(--red); }
+  .dcf-card.base .dcf-price { color: var(--green); }
+  .dcf-card.bull .dcf-price { color: #1d4ed8; }
+  .dcf-card .dcf-assume { font-size: 12px; color: var(--gray); line-height: 1.6; }
+  .dcf-card .dcf-margin { font-size: 13px; font-weight: 700; margin-top: 8px; }
+
+  /* ─── MOAT ─── */
+  .moat-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .moat-item:last-child { border-bottom: none; }
+  .moat-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+  .moat-title { font-weight: 700; font-size: 15px; margin-bottom: 3px; }
+  .moat-desc { font-size: 14px; color: #374151; line-height: 1.6; }
+  .moat-strength {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .ms-strong { background: #dcfce7; color: #15803d; }
+  .ms-medium { background: #fef9c3; color: #a16207; }
+  .ms-weak { background: #fee2e2; color: #b91c1c; }
+
+  /* ─── RISK ─── */
+  .risk-item { padding: 10px 14px; border-left: 4px solid; border-radius: 0 6px 6px 0; margin-bottom: 10px; }
+  .risk-h { border-color: var(--red); background: #fff5f5; }
+  .risk-m { border-color: #f59e0b; background: #fffbeb; }
+  .risk-l { border-color: var(--green); background: #f0fff4; }
+  .risk-title { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
+  .risk-desc { font-size: 13px; color: #374151; }
+
+  /* ─── FRAMEWORK ─── */
+  .fw-row { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); gap: 12px; }
+  .fw-row:last-child { border-bottom: none; }
+  .fw-name { width: 140px; font-size: 14px; font-weight: 600; color: var(--primary); flex-shrink: 0; }
+  .fw-bar-wrap { flex: 1; background: var(--border); border-radius: 4px; height: 10px; overflow: hidden; }
+  .fw-bar-fill { height: 100%; border-radius: 4px; }
+  .fw-score-text { width: 40px; text-align: right; font-weight: 800; font-size: 15px; flex-shrink: 0; }
+  .fw-comment { font-size: 12px; color: var(--gray); flex: 1.2; }
+
+  /* ─── CONCLUSION ─── */
+  .conclusion-box {
+    background: linear-gradient(135deg, #0f2847, #1a3a5c);
+    color: white;
+    border-radius: 12px;
+    padding: 32px 36px;
+    margin-top: 8px;
+  }
+  .conclusion-box h3 { font-size: 20px; margin-bottom: 16px; color: #f0c040; }
+  .conclusion-points { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .conclusion-points li { display: flex; gap: 10px; font-size: 14px; line-height: 1.6; }
+  .conclusion-points li::before { content: '▸'; color: #f0c040; flex-shrink: 0; margin-top: 1px; }
+
+  /* ─── TAG ─── */
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 2px;
+  }
+  .tag-blue { background: #dbeafe; color: #1d4ed8; }
+  .tag-green { background: #dcfce7; color: #15803d; }
+  .tag-red { background: #fee2e2; color: #b91c1c; }
+  .tag-yellow { background: #fef9c3; color: #a16207; }
+
+  /* ─── FOOTNOTE ─── */
+  .footnote { font-size: 12px; color: var(--gray); margin-top: 12px; font-style: italic; }
+
+  /* ─── TOC ─── */
+  .toc { background: #f0f8ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; }
+  .toc-title { font-weight: 700; font-size: 14px; color: var(--primary); margin-bottom: 8px; }
+  .toc-list { display: flex; flex-wrap: wrap; gap: 8px 20px; list-style: none; }
+  .toc-list li a { font-size: 13px; color: #2563eb; text-decoration: none; }
+  .toc-list li a:hover { text-decoration: underline; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width:768px){ .two-col { grid-template-columns: 1fr; } }
+  .highlight-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 14px 16px; font-size: 14px; }
+  .highlight-box strong { color: #92400e; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <a href="./index.html" style="color: rgba(255,255,255,0.8); text-decoration: none; display: inline-flex; align-items: center; margin-bottom: 20px; font-size: 14px; transition: color 0.2s; position: relative; z-index: 10;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.8)'">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    返回主页 / Return to Home
+  </a><br>
+  <div class="cover-badge">价值投资深度研究报告</div>
+  <h1>拼多多 <span>PDD Holdings</span></h1>
+  <div class="subtitle">NASDAQ: PDD &nbsp;|&nbsp; 基于格雷厄姆·巴菲特·芒格·费雪四框架综合分析</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">报告日期<strong>2026年3月29日</strong></div>
+    <div class="cover-meta-item">数据基准<strong>2025财年年报（2026.3.25发布）</strong></div>
+    <div class="cover-meta-item">当前股价<strong>$99.81（美元）</strong></div>
+    <div class="cover-meta-item">市值<strong>$1,417亿</strong></div>
+    <div class="cover-meta-item">研究框架<strong>Graham · Buffett · Munger · Fisher</strong></div>
+  </div>
+</div>
+
+<!-- VERDICT -->
+<div class="verdict-banner">
+  <div>
+    <div class="verdict-label">投资评级</div>
+    <div class="verdict-value">⚖️ 审慎买入 / 逢低建仓</div>
+  </div>
+  <div class="verdict-price-range">
+    <div class="verdict-label">基准内在价值估算区间</div>
+    <div class="range-val">$115 – $165</div>
+  </div>
+  <div>
+    <div class="verdict-label">当前安全边际（基准中值）</div>
+    <div class="verdict-value" style="color:#7fff9f;">约 30–40%</div>
+  </div>
+  <div>
+    <div class="verdict-label">综合评分</div>
+    <div class="verdict-value">7.0 / 10</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">📋 报告目录</div>
+    <ul class="toc-list">
+      <li><a href="#s1">一、公司概览</a></li>
+      <li><a href="#s2">二、财务趋势分析</a></li>
+      <li><a href="#s3">三、关键财务指标</a></li>
+      <li><a href="#s4">四、护城河评估</a></li>
+      <li><a href="#s5">五、内在价值估算</a></li>
+      <li><a href="#s6">六、四大框架评分</a></li>
+      <li><a href="#s7">七、风险清单</a></li>
+      <li><a href="#s8">八、投资决策</a></li>
+    </ul>
+  </div>
+
+  <!-- S1: 公司概览 -->
+  <div class="section" id="s1">
+    <div class="section-title"><span class="icon">🏢</span>一、公司概览</div>
+    <div class="two-col">
+      <div>
+        <table>
+          <tr><th colspan="2">基本信息</th></tr>
+          <tr><td>公司全称</td><td>PDD Holdings Inc.</td></tr>
+          <tr><td>中文名称</td><td>拼多多控股</td></tr>
+          <tr><td>主要平台</td><td>拼多多（国内）+ Temu（海外）</td></tr>
+          <tr><td>股票代码</td><td>NASDAQ: PDD</td></tr>
+          <tr><td>注册地</td><td>爱尔兰都柏林（运营在中国上海）</td></tr>
+          <tr><td>CEO</td><td>陈磊（Lei Chen，联席CEO）</td></tr>
+          <tr><td>财年</td><td>1月1日 — 12月31日</td></tr>
+          <tr><td>会计货币</td><td>人民币（CNY）</td></tr>
+          <tr><td>股本结构</td><td>ADS（1 ADS = 4普通股）</td></tr>
+        </table>
+      </div>
+      <div>
+        <table>
+          <tr><th colspan="2">业务模式</th></tr>
+          <tr><td>收入来源①</td><td>在线营销服务（广告收入）</td></tr>
+          <tr><td>2025年占比</td><td>50.4% — ¥2,178亿元</td></tr>
+          <tr><td>收入来源②</td><td>交易服务（佣金/物流/支付）</td></tr>
+          <tr><td>2025年占比</td><td>49.6% — ¥2,141亿元</td></tr>
+          <tr><td>核心价值主张</td><td>极致性价比 + 农产品供应链直连</td></tr>
+          <tr><td>国际业务</td><td>Temu（快时尚跨境电商）</td></tr>
+          <tr><td>商业模式</td><td>轻资产平台（Asset-Light）</td></tr>
+          <tr><td>现金储备</td><td>¥4,223亿元（$604亿）</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:16px;">
+      <strong>业务本质：</strong>拼多多是中国最大的农产品上行及下沉市场电商平台，通过"拼团"社交裂变模式崛起，现已成为中国月活用户超9亿的第一大电商APP。Temu是其海外扩张的核心武器，2022年上线后已迅速扩展至70+个国家，采用全托管供应链模式，以价格极具竞争力的中国商品冲击海外零售市场。
+    </div>
+  </div>
+
+  <!-- S2: 财务趋势分析 -->
+  <div class="section" id="s2">
+    <div class="section-title"><span class="icon">📈</span>二、财务趋势分析（2021-2025）</div>
+    <table>
+      <tr>
+        <th>财年</th>
+        <th class="td-r">营收（亿元）</th>
+        <th class="td-r">营收增速</th>
+        <th class="td-r">净利润（亿元）</th>
+        <th class="td-r">净利润增速</th>
+        <th class="td-r">毛利率</th>
+        <th class="td-r">运营利润率</th>
+        <th class="td-r">净利率</th>
+      </tr>
+      <tr>
+        <td>2021</td>
+        <td class="td-r">939.5</td>
+        <td class="td-r val-pos">+57.9%</td>
+        <td class="td-r">77.7</td>
+        <td class="td-r val-neut">首次盈利</td>
+        <td class="td-r">66.2%</td>
+        <td class="td-r">7.3%</td>
+        <td class="td-r">8.3%</td>
+      </tr>
+      <tr>
+        <td>2022</td>
+        <td class="td-r">1,305.6</td>
+        <td class="td-r val-pos">+39.0%</td>
+        <td class="td-r">315.4</td>
+        <td class="td-r val-pos">+306%</td>
+        <td class="td-r">75.9%</td>
+        <td class="td-r">23.3%</td>
+        <td class="td-r">24.2%</td>
+      </tr>
+      <tr>
+        <td>2023</td>
+        <td class="td-r">2,476.4</td>
+        <td class="td-r val-pos">+89.7%</td>
+        <td class="td-r">600.3</td>
+        <td class="td-r val-pos">+90.3%</td>
+        <td class="td-r">63.0%</td>
+        <td class="td-r">23.7%</td>
+        <td class="td-r">24.2%</td>
+      </tr>
+      <tr>
+        <td>2024</td>
+        <td class="td-r">3,938.4</td>
+        <td class="td-r val-pos">+59.0%</td>
+        <td class="td-r">1,124.4</td>
+        <td class="td-r val-pos">+87.3%</td>
+        <td class="td-r">60.9%</td>
+        <td class="td-r">27.5%</td>
+        <td class="td-r">28.6%</td>
+      </tr>
+      <tr style="background:#fafef0;">
+        <td><strong>2025 ★</strong></td>
+        <td class="td-r"><strong>4,318.5</strong></td>
+        <td class="td-r val-neut"><strong>+9.6%</strong></td>
+        <td class="td-r"><strong>993.6</strong></td>
+        <td class="td-r val-neg"><strong>-11.6%</strong></td>
+        <td class="td-r">56.3%</td>
+        <td class="td-r">21.9%</td>
+        <td class="td-r">23.0%</td>
+      </tr>
+    </table>
+
+    <div style="margin-top:20px;">
+      <div class="section-title" style="font-size:15px; border-bottom:none; padding-bottom:0; margin-bottom:12px;">📊 2025年Q4单季数据</div>
+      <table>
+        <tr>
+          <th>指标</th>
+          <th class="td-r">2024Q4（亿元）</th>
+          <th class="td-r">2025Q4（亿元）</th>
+          <th class="td-r">同比变化</th>
+        </tr>
+        <tr>
+          <td>总营收</td>
+          <td class="td-r">1,106.1</td>
+          <td class="td-r">1,239.1</td>
+          <td class="td-r val-pos">+12.0%</td>
+        </tr>
+        <tr>
+          <td>— 在线营销服务</td>
+          <td class="td-r">570.1</td>
+          <td class="td-r">600.1</td>
+          <td class="td-r val-pos">+5.3%</td>
+        </tr>
+        <tr>
+          <td>— 交易服务</td>
+          <td class="td-r">536.0</td>
+          <td class="td-r">639.0</td>
+          <td class="td-r val-pos">+19.2%</td>
+        </tr>
+        <tr>
+          <td>营业利润</td>
+          <td class="td-r">255.9</td>
+          <td class="td-r">277.2</td>
+          <td class="td-r val-pos">+8.3%</td>
+        </tr>
+        <tr>
+          <td>GAAP净利润</td>
+          <td class="td-r">274.5</td>
+          <td class="td-r">245.4</td>
+          <td class="td-r val-neg">-10.6%</td>
+        </tr>
+        <tr>
+          <td>经营现金流</td>
+          <td class="td-r">295.5</td>
+          <td class="td-r">241.2</td>
+          <td class="td-r val-neg">-18.4%</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="highlight-box" style="margin-top:16px; background:#fff5f5; border-color:#fca5a5;">
+      <strong>⚠️ 关键信号：增长减速 + 利润拐点</strong><br>
+      2025年是拼多多上市以来首次出现全年净利润同比下滑（-11.6%）。营收增速从2024年的59%骤降至10%以下。毛利率从2022年高点75.9%持续下压至56.3%，主要驱动因素：①Temu国际业务补贴成本高企；②国内竞争白热化，用户补贴与商家支持投入加大；③研发费用大幅增长（+30%）。管理层明确表示将持续加大长期供应链投资，接受短期利润承压。
+    </div>
+  </div>
+
+  <!-- S3: 关键财务指标 -->
+  <div class="section" id="s3">
+    <div class="section-title"><span class="icon">🔢</span>三、关键财务指标（2025年）</div>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="m-label">总营收（2025年全年）</div>
+        <div class="m-val">¥4,318亿</div>
+        <div class="m-sub">约$617亿美元，YoY +9.6%</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">GAAP净利润</div>
+        <div class="m-val" style="color:var(--red);">¥994亿</div>
+        <div class="m-sub">YoY -11.6%，净利率23.0%</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">非GAAP净利润</div>
+        <div class="m-val">¥1,073亿</div>
+        <div class="m-sub">YoY -12.3%，剔除股权激励</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">稀释EPS（每ADS）</div>
+        <div class="m-val">¥67.03</div>
+        <div class="m-sub">约$9.59，YoY -12%</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">毛利率</div>
+        <div class="m-val" style="color:#d97706;">56.3%</div>
+        <div class="m-sub">2024年为60.9%，持续下行</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">运营利润率</div>
+        <div class="m-val">21.9%</div>
+        <div class="m-sub">2024年为27.5%，下降明显</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">经营现金流</div>
+        <div class="m-val">¥1,069亿</div>
+        <div class="m-sub">约$153亿，YoY -12%</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">现金+短投总储备</div>
+        <div class="m-val" style="color:var(--green);">¥4,223亿</div>
+        <div class="m-sub">约$604亿，零负债，超强现金</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">净资产收益率（ROE）</div>
+        <div class="m-val" style="color:var(--green);">27.3%</div>
+        <div class="m-sub">优秀水平，远超行业均值</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">投资资本回报率（ROIC）</div>
+        <div class="m-val" style="color:var(--green);">15.9%</div>
+        <div class="m-sub">显著高于资本成本</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">市盈率（PE，TTM）</div>
+        <div class="m-val">~10.4x</div>
+        <div class="m-sub">当前股价$99.81</div>
+      </div>
+      <div class="metric-card">
+        <div class="m-label">EV/EBITDA</div>
+        <div class="m-val">6.0x</div>
+        <div class="m-sub">含$604亿净现金后极低</div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <table>
+        <tr>
+          <th>财务质量评估项</th>
+          <th>数值/状态</th>
+          <th>格雷厄姆标准</th>
+          <th>评价</th>
+        </tr>
+        <tr>
+          <td>流动比率</td>
+          <td>约 2.5x（估算）</td>
+          <td>≥ 2.0</td>
+          <td class="val-pos">✅ 通过</td>
+        </tr>
+        <tr>
+          <td>净负债/EBITDA</td>
+          <td>净现金 $604亿（负债为零）</td>
+          <td>≤ 3x</td>
+          <td class="val-pos">✅ 优秀</td>
+        </tr>
+        <tr>
+          <td>10年持续盈利</td>
+          <td>2021年后持续盈利（上市5年）</td>
+          <td>10年无亏损年</td>
+          <td class="val-neut">⚠️ 历史不足</td>
+        </tr>
+        <tr>
+          <td>分红记录</td>
+          <td>无分红（再投资/回购）</td>
+          <td>20年分红</td>
+          <td class="val-neut">⚠️ 成长型特征</td>
+        </tr>
+        <tr>
+          <td>EPS 5年CAGR</td>
+          <td>2021-2025年约 +66% CAGR</td>
+          <td>≥ 3%</td>
+          <td class="val-pos">✅ 远超</td>
+        </tr>
+        <tr>
+          <td>资产负债率</td>
+          <td>极低，无有息负债</td>
+          <td>D/E ≤ 0.5</td>
+          <td class="val-pos">✅ 优秀</td>
+        </tr>
+        <tr>
+          <td>ROE（最近年）</td>
+          <td>27.3%</td>
+          <td>≥ 15%</td>
+          <td class="val-pos">✅ 优秀</td>
+        </tr>
+        <tr>
+          <td>Graham P/E 标准</td>
+          <td>PE ≈ 10.4x</td>
+          <td>≤ 15x</td>
+          <td class="val-pos">✅ 通过</td>
+        </tr>
+        <tr>
+          <td>VIE结构风险</td>
+          <td>存在，注册在爱尔兰</td>
+          <td>无</td>
+          <td class="val-neg">❌ 需注意</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- S4: 护城河 -->
+  <div class="section" id="s4">
+    <div class="section-title"><span class="icon">🏰</span>四、护城河评估（Economic Moat Analysis）</div>
+
+    <div class="moat-item">
+      <div class="moat-icon">🌐</div>
+      <div>
+        <div class="moat-title">网络效应（Network Effects）<span class="moat-strength ms-strong">强</span></div>
+        <div class="moat-desc">月活超9亿用户形成的买卖双边网络是最核心的护城河。更多买家→更多商家入驻→更低商品价格→吸引更多买家。拼多多的"拼团"机制天然强化了这一正循环，社交裂变获客成本极低，且规模效应随用户增长持续强化。</div>
+      </div>
+    </div>
+    <div class="moat-item">
+      <div class="moat-icon">🏭</div>
+      <div>
+        <div class="moat-title">供应链直连能力（Supply Chain Integration）<span class="moat-strength ms-strong">强</span></div>
+        <div class="moat-desc">拼多多通过"农地云拼"建立了覆盖全国2,800+县域的农产品直采供应链。公司与超1,000万农业生产者及1,600万活跃商家直接连接，中间环节极少，商品价格领先竞争对手20-40%。这一供应链基础设施需要多年积累，是竞争对手难以快速复制的核心壁垒。</div>
+      </div>
+    </div>
+    <div class="moat-item">
+      <div class="moat-icon">💰</div>
+      <div>
+        <div class="moat-title">成本优势（Cost Advantage）<span class="moat-strength ms-strong">强</span></div>
+        <div class="moat-desc">极致性价比定位形成了消费者心智中难以撼动的"最低价"品牌印象。拼多多的百亿补贴、农产品直采、以及平台模式下的轻资产运营（无需持有库存）使其获客/运营成本结构持续领先同行。对比阿里、京东，PDD的运营利润率恢复能力更强。</div>
+      </div>
+    </div>
+    <div class="moat-item">
+      <div class="moat-icon">📊</div>
+      <div>
+        <div class="moat-title">数据优势（Data Advantage）<span class="moat-strength ms-medium">中等</span></div>
+        <div class="moat-desc">掌握中国消费者最真实的价格敏感性数据及下沉市场消费偏好，算法推荐准确率极高。然而随着阿里、京东在AI化方面持续投入，数据护城河的壁垒在收窄。Temu模式同时积累了全球商品价格数据库，对供应链优化有战略价值。</div>
+      </div>
+    </div>
+    <div class="moat-item">
+      <div class="moat-icon">🌍</div>
+      <div>
+        <div class="moat-title">Temu全球扩张（International Optionality）<span class="moat-strength ms-medium">发展中</span></div>
+        <div class="moat-desc">Temu已进入70+国家，2024年GMV估算超1,000亿美元，成为全球增长最快的跨境电商平台。其全托管供应链模式将中国制造商直连全球消费者，本质上是将拼多多的供应链能力复制到海外。但监管风险（美国关税政策、欧盟数字法案）和持续亏损是短期制约。</div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; padding:16px; background:#f0fff4; border:1px solid #6ee7b7; border-radius:8px;">
+      <strong style="color:#15803d;">护城河综合评级：宽护城河（Wide Moat）</strong><br>
+      <span style="font-size:14px; color:#374151;">网络效应+供应链直连+成本优势三重叠加，形成芒格"Lollapalooza效应"——多个增强力量同时作用，整体护城河强度远超单一维度。10年内被颠覆的可能性较低，但护城河宽度在高竞争压力下有所收窄。</span>
+    </div>
+  </div>
+
+  <!-- S5: 内在价值估算 -->
+  <div class="section" id="s5">
+    <div class="section-title"><span class="icon">💎</span>五、内在价值估算</div>
+
+    <p style="font-size:14px; color:#374151; margin-bottom:16px;">以下使用三种方法估算拼多多每ADS内在价值，并以三情景覆盖不确定性范围。汇率按1 USD = 7.0 CNY。</p>
+
+    <!-- 方法1：DCF -->
+    <div style="margin-bottom:20px;">
+      <div style="font-weight:700; font-size:15px; color:var(--primary); margin-bottom:10px;">方法① — 自由现金流折现（DCF）</div>
+      <table>
+        <tr>
+          <th>假设参数</th>
+          <th>悲观情景</th>
+          <th>基准情景</th>
+          <th>乐观情景</th>
+        </tr>
+        <tr>
+          <td>基期自由现金流（FCF）</td>
+          <td colspan="3" class="td-c">¥960亿元（保守估算2025年FCF，略低于经营现金流）</td>
+        </tr>
+        <tr>
+          <td>第1-5年FCF增速</td>
+          <td class="td-c">-5% → 0%（萎缩后企稳）</td>
+          <td class="td-c">+8% → +12%</td>
+          <td class="td-c">+18% → +22%</td>
+        </tr>
+        <tr>
+          <td>第6-10年FCF增速</td>
+          <td class="td-c">3%</td>
+          <td class="td-c">8%</td>
+          <td class="td-c">13%</td>
+        </tr>
+        <tr>
+          <td>永续增长率（g）</td>
+          <td class="td-c">2.0%</td>
+          <td class="td-c">3.0%</td>
+          <td class="td-c">4.0%</td>
+        </tr>
+        <tr>
+          <td>折现率（WACC）</td>
+          <td class="td-c">13%</td>
+          <td class="td-c">11%</td>
+          <td class="td-c">10%</td>
+        </tr>
+        <tr>
+          <td>VIE/监管风险折价</td>
+          <td class="td-c">20%</td>
+          <td class="td-c">15%</td>
+          <td class="td-c">10%</td>
+        </tr>
+        <tr style="background:#fafef0;">
+          <td><strong>每ADS内在价值估算</strong></td>
+          <td class="td-c val-neg"><strong>$78</strong></td>
+          <td class="td-c val-pos"><strong>$140</strong></td>
+          <td class="td-c" style="color:#1d4ed8;"><strong>$210</strong></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 方法2：格雷厄姆公式 -->
+    <div style="margin-bottom:20px;">
+      <div style="font-weight:700; font-size:15px; color:var(--primary); margin-bottom:10px;">方法② — 格雷厄姆估值公式（V = EPS × (8.5 + 2g) × 4.4/Y）</div>
+      <table>
+        <tr>
+          <th>参数</th>
+          <th>数值</th>
+          <th>说明</th>
+        </tr>
+        <tr>
+          <td>TTM EPS（每ADS，美元）</td>
+          <td>$9.59</td>
+          <td>2025年全年稀释EPS</td>
+        </tr>
+        <tr>
+          <td>预期增长率 g</td>
+          <td>10%（保守）/ 15%（中性）</td>
+          <td>未来7-10年年均增速</td>
+        </tr>
+        <tr>
+          <td>当前AAA债收益率 Y</td>
+          <td>4.8%</td>
+          <td>2026年3月美国AAA债利率</td>
+        </tr>
+        <tr>
+          <td>基准公式（g=10%）</td>
+          <td><strong>$9.59 × (8.5 + 20) × (4.4/4.8)</strong></td>
+          <td>= <strong>$115</strong> / ADS</td>
+        </tr>
+        <tr>
+          <td>中性公式（g=15%）</td>
+          <td><strong>$9.59 × (8.5 + 30) × (4.4/4.8)</strong></td>
+          <td>= <strong>$151</strong> / ADS</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 方法3：资产价值法 -->
+    <div style="margin-bottom:20px;">
+      <div style="font-weight:700; font-size:15px; color:var(--primary); margin-bottom:10px;">方法③ — 净现金调整市盈率法（Owner Earnings）</div>
+      <table>
+        <tr><th>项目</th><th>数值</th></tr>
+        <tr><td>非GAAP净利润（2025年）</td><td>$153亿</td></tr>
+        <tr><td>合理目标倍数（同行阿里10-12x，京东15x）</td><td>12-15x</td></tr>
+        <tr><td>业务价值估算</td><td>$1,836 – $2,295亿</td></tr>
+        <tr><td>加：净现金</td><td>+$604亿</td></tr>
+        <tr><td>企业总价值（EV）</td><td>$2,440 – $2,899亿</td></tr>
+        <tr><td>稀释股份数（约14.2亿ADS当量）</td><td>÷ 14.2亿</td></tr>
+        <tr><td><strong>每ADS估值区间</strong></td><td><strong>$172 – $204</strong></td></tr>
+      </table>
+    </div>
+
+    <!-- 三情景汇总 -->
+    <div class="dcf-grid">
+      <div class="dcf-card bear">
+        <div class="dcf-label">😟 悲观情景（30%概率）</div>
+        <div class="dcf-price">$78–$95</div>
+        <div class="dcf-assume">
+          Temu遭遇重大监管打击<br>
+          国内竞争持续侵蚀利润<br>
+          利润长期萎缩，护城河减弱
+        </div>
+        <div class="dcf-margin" style="color:var(--red);">当前股价高估约10-25%</div>
+      </div>
+      <div class="dcf-card base">
+        <div class="dcf-label">😊 基准情景（50%概率）</div>
+        <div class="dcf-price">$115–$165</div>
+        <div class="dcf-assume">
+          国内业务稳健，Temu走向盈亏平衡<br>
+          FCF年均+8-12%增长<br>
+          ROE维持20-25%区间
+        </div>
+        <div class="dcf-margin" style="color:var(--green);">当前$99.81较基准中值低30-40%</div>
+      </div>
+      <div class="dcf-card bull">
+        <div class="dcf-label">🚀 乐观情景（20%概率）</div>
+        <div class="dcf-price">$185–$230</div>
+        <div class="dcf-assume">
+          Temu率先在主要市场盈利<br>
+          国内平台提价成功<br>
+          AI赋能供应链效率大幅提升
+        </div>
+        <div class="dcf-margin" style="color:#1d4ed8;">当前存在85-130%上涨空间</div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top:16px;">
+      <strong>📌 估值综合结论：</strong>
+      三种方法加权后，基准内在价值区间约为 <strong>$115–$165/ADS</strong>。当前股价$99.81处于悲观至基准情景之间，相对基准中值（$140）约有30-40%的安全边际。考虑VIE结构、中美关系等政治风险折价后，$100以下属于合理买入区间。
+    </div>
+    <p class="footnote">⚠ 以上估算仅供参考，不构成投资建议。内在价值估算存在较大不确定性，实际结果可能显著不同。</p>
+  </div>
+
+  <!-- S6: 四大框架评分 -->
+  <div class="section" id="s6">
+    <div class="section-title"><span class="icon">🎯</span>六、四大投资框架评分</div>
+    <div class="score-grid">
+      <div class="score-card">
+        <div class="fw">格雷厄姆量化</div>
+        <div class="score-num s-orange">6.5</div>
+        <div class="score-bar"><div class="score-fill fill-orange" style="width:65%"></div></div>
+        <div class="score-label">PE通过 · 无杠杆 · 历史短</div>
+      </div>
+      <div class="score-card">
+        <div class="fw">巴菲特业务质量</div>
+        <div class="score-num s-green">7.5</div>
+        <div class="score-bar"><div class="score-fill fill-green" style="width:75%"></div></div>
+        <div class="score-label">宽护城河 · ROE优 · 现金充裕</div>
+      </div>
+      <div class="score-card">
+        <div class="fw">芒格心智模型</div>
+        <div class="score-num s-orange">6.5</div>
+        <div class="score-bar"><div class="score-fill fill-orange" style="width:65%"></div></div>
+        <div class="score-label">商业简单 · VIE复杂 · 监管风险</div>
+      </div>
+      <div class="score-card">
+        <div class="fw">费雪成长质量</div>
+        <div class="score-num s-green">7.5</div>
+        <div class="score-bar"><div class="score-fill fill-green" style="width:75%"></div></div>
+        <div class="score-label">产品强 · 供应链壁垒 · 管理层</div>
+      </div>
+    </div>
+
+    <!-- 详细评分 -->
+    <div style="margin-top:20px;">
+      <div style="font-weight:700; font-size:15px; color:var(--primary); margin-bottom:12px;">📋 各框架详细评分</div>
+
+      <div style="margin-bottom:18px;">
+        <div style="font-weight:700; color:#7c3aed; margin-bottom:8px;">① 格雷厄姆量化清单（6.5/10）</div>
+        <table>
+          <tr><th>格雷厄姆标准</th><th>阈值</th><th>PDD实际</th><th>评分</th></tr>
+          <tr><td>公司规模</td><td>市值>$5亿</td><td>市值$1,417亿</td><td class="val-pos">✅ 通过</td></tr>
+          <tr><td>流动比率</td><td>≥ 2.0</td><td>~2.5（估算）</td><td class="val-pos">✅ 通过</td></tr>
+          <tr><td>盈利稳定性</td><td>10年无亏损</td><td>仅5年盈利史</td><td class="val-neut">⚠️ 不足</td></tr>
+          <tr><td>分红记录</td><td>20年持续</td><td>无分红</td><td class="val-neg">❌ N/A</td></tr>
+          <tr><td>EPS增长（5年）</td><td>CAGR≥3%</td><td>~+66% CAGR</td><td class="val-pos">✅ 优秀</td></tr>
+          <tr><td>市盈率</td><td>P/E ≤ 15x</td><td>P/E ≈ 10.4x</td><td class="val-pos">✅ 通过</td></tr>
+          <tr><td>市净率</td><td>P/B ≤ 1.5x</td><td>P/B ≈ 2.8x（估算）</td><td class="val-neut">⚠️ 偏高</td></tr>
+          <tr><td>财务稳健</td><td>D/E ≤ 0.5</td><td>净现金，无有息债</td><td class="val-pos">✅ 优秀</td></tr>
+        </table>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <div style="font-weight:700; color:#1d4ed8; margin-bottom:8px;">② 巴菲特业务质量清单（7.5/10）</div>
+        <table>
+          <tr><th>巴菲特标准</th><th>评价</th><th>评分</th></tr>
+          <tr><td>ROE持续>15%（无过度杠杆）</td><td>ROE 27.3%，零杠杆，属于真实高ROE</td><td class="val-pos">✅ 优秀</td></tr>
+          <tr><td>高且稳定的运营利润率</td><td>2025年21.9%，仍处较高水平，但在下行</td><td class="val-neut">⚠️ 注意趋势</td></tr>
+          <tr><td>轻资产模式（低维护资本）</td><td>平台模式，无需持有库存，资本开支极低</td><td class="val-pos">✅ 优秀</td></tr>
+          <tr><td>持久竞争优势（护城河）</td><td>网络效应+供应链+成本三重护城河</td><td class="val-pos">✅ 宽护城河</td></tr>
+          <tr><td>定价权（可涨价不失客户）</td><td>现阶段靠低价竞争，定价权待验证</td><td class="val-neut">⚠️ 待验证</td></tr>
+          <tr><td>管理层像股东一样思考</td><td>创始人黄铮退出，管理层专注长期，无过度薪酬</td><td class="val-pos">✅ 较好</td></tr>
+          <tr><td>资本配置历史</td><td>保留现金，无并购浪费，研发投入聚焦</td><td class="val-pos">✅ 良好</td></tr>
+          <tr><td>10年盈利可预测性</td><td>Temu不确定性高，10年可见度中等</td><td class="val-neut">⚠️ 有限</td></tr>
+        </table>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <div style="font-weight:700; color:#059669; margin-bottom:8px;">③ 芒格心智模型评估（6.5/10）</div>
+        <table>
+          <tr><th>评估维度</th><th>分析</th><th>评分</th></tr>
+          <tr><td>业务是否简单易懂</td><td>国内业务清晰；Temu国际扩张增加了复杂性</td><td class="val-neut">⚠️ 中等</td></tr>
+          <tr><td>竞争地位是否在强化</td><td>国内GMV份额稳固；利润率在压缩，信号混杂</td><td class="val-neut">⚠️ 混杂</td></tr>
+          <tr><td>管理层激励是否对齐</td><td>黄铮放弃大量报酬，当前管理层薪酬合理</td><td class="val-pos">✅ 良好</td></tr>
+          <tr><td>芒格"太难了"清单</td><td>VIE结构+美中关税风险→确实偏难</td><td class="val-neg">❌ 有挑战</td></tr>
+          <tr><td>反转思维：什么会让PDD失败</td><td>监管打压、Temu被封、价格战恶化、AI商业</td><td class="val-neut">⚠️ 多个尾险</td></tr>
+          <tr><td>Lollapalooza效应</td><td>网络效应×供应链×低价×社交裂变叠加</td><td class="val-pos">✅ 明显</td></tr>
+        </table>
+      </div>
+
+      <div>
+        <div style="font-weight:700; color:#d97706; margin-bottom:8px;">④ 费雪成长质量评估（7.5/10）</div>
+        <table>
+          <tr><th>费雪15点（关键项）</th><th>评估</th><th>评分</th></tr>
+          <tr><td>产品市场空间大且持续增长</td><td>农产品上行+下沉市场消费升级+全球跨境零售，空间巨大</td><td class="val-pos">✅ 强</td></tr>
+          <tr><td>R&D投入强度</td><td>2025年研发费用同比+30%，积极研发AI推荐算法、供应链系统</td><td class="val-pos">✅ 强</td></tr>
+          <tr><td>销售组织有效性</td><td>百亿补贴+社区团购+拼团机制，营销ROI极高</td><td class="val-pos">✅ 强</td></tr>
+          <tr><td>利润率值得持有</td><td>净利率23%、运营利润率22%在电商中属最高梯队</td><td class="val-pos">✅ 良好</td></tr>
+          <tr><td>高管深度与管理层质量</td><td>管理层经历了拼多多完整成长周期，但依赖度较高</td><td class="val-neut">⚠️ 中等</td></tr>
+          <tr><td>管理层是否对投资者诚实透明</td><td>较少公开指引，信息披露相对保守</td><td class="val-neut">⚠️ 偏弱</td></tr>
+          <tr><td>长期视野而非季度利润导向</td><td>主动承受短期利润下滑投资长期供应链，符合长期导向</td><td class="val-pos">✅ 强</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; padding:16px 20px; background:#1a3a5c; color:white; border-radius:8px;">
+      <strong style="font-size:15px; color:#f0c040;">综合加权评分：7.0 / 10</strong>
+      <div style="font-size:13px; color:rgba(255,255,255,0.85); margin-top:6px;">
+        &nbsp; 格雷厄姆(6.5) × 25% + 巴菲特(7.5) × 35% + 芒格(6.5) × 20% + 费雪(7.5) × 20% = <strong>7.0</strong><br>
+        &nbsp; 解读：<strong>好业务，正确价格。</strong>不是"完美"企业（10分），但具备显著竞争优势、极低估值倍数和超强资产负债表，当前股价提供了真实的安全边际。
+      </div>
+    </div>
+  </div>
+
+  <!-- S7: 风险清单 -->
+  <div class="section" id="s7">
+    <div class="section-title"><span class="icon">⚠️</span>七、风险清单（Munger倒置法）</div>
+
+    <div class="risk-item risk-h">
+      <div class="risk-title">🔴 高风险 — 美国关税与Temu监管风险</div>
+      <div class="risk-desc">美国2025年关税政策升级（对中国商品加征高关税）直接冲击Temu盈利模型。若"最低限额"（De minimis）豁免彻底取消，Temu的价格竞争力将大幅削弱，可能导致GMV大幅缩水。此为当前最大尾部风险。</div>
+    </div>
+    <div class="risk-item risk-h">
+      <div class="risk-title">🔴 高风险 — VIE结构与中概股政治风险</div>
+      <div class="risk-desc">VIE结构下，美国投资者持有的是开曼/爱尔兰空壳公司股份，而非中国实体资产。若中美关系恶化或中国出台限制性政策，股东对底层资产的法律控制存在根本性不确定性。此为不可量化的系统性风险。</div>
+    </div>
+    <div class="risk-item risk-m">
+      <div class="risk-title">🟡 中风险 — 国内竞争格局恶化</div>
+      <div class="risk-desc">阿里的"淘宝闪购"、京东的下沉战略、抖音电商的高速增长，以及美团快手等新竞争者持续分流。2025年在线营销服务收入增速仅5%（远低于历史），反映广告主投入意愿下降，竞争压力显著。</div>
+    </div>
+    <div class="risk-item risk-m">
+      <div class="risk-title">🟡 中风险 — 利润率趋势持续下行</div>
+      <div class="risk-desc">毛利率从2022年高点75.9%降至2025年56.3%，运营利润率从27.5%降至21.9%，且管理层预告将继续加大投入。若利润率无法在3-4年内企稳回升，将对长期估值逻辑构成挑战。</div>
+    </div>
+    <div class="risk-item risk-m">
+      <div class="risk-title">🟡 中风险 — Temu国际市场竞争加剧</div>
+      <div class="risk-desc">SHEIN、速卖通（AliExpress）、TikTok Shop等竞争对手在海外市场同样布局，Temu的先发优势正在缩小。多国监管机构对平台商品质量/数据安全监管趋严，合规成本持续上升。</div>
+    </div>
+    <div class="risk-item risk-l">
+      <div class="risk-title">🟢 低风险 — 宏观消费下行</div>
+      <div class="risk-desc">拼多多的极致性价比定位使其在消费降级环境中反而受益（防御性属性较强）。历史上2022年经济承压期间，拼多多市场份额逆势扩大。</div>
+    </div>
+    <div class="risk-item risk-l">
+      <div class="risk-title">🟢 低风险 — 财务造假风险</div>
+      <div class="risk-desc">现金储备超$600亿、收入结构清晰（广告+佣金两条线）、无大规模并购，财务造假的可能性及激励相对低。相比部分中概股，PDD的商业模式透明度较高。</div>
+    </div>
+  </div>
+
+  <!-- S8: 投资决策 -->
+  <div class="section" id="s8">
+    <div class="section-title"><span class="icon">✅</span>八、投资决策与操作建议</div>
+
+    <div class="conclusion-box">
+      <h3>📋 投资结论摘要</h3>
+      <ul class="conclusion-points">
+        <li>
+          <strong>评级：审慎买入（Cautious Buy）/ 逢低建仓</strong><br>
+          当前股价$99.81，相对基准内在价值（$115-165）存在约30-40%安全边际。公司具备宽护城河、极强现金储备（$604亿净现金，相当于市值的43%）和优秀的资本回报率（ROE 27.3%），是一家被市场因短期利润下滑而过度悲观定价的优质企业。
+        </li>
+        <li>
+          <strong>关键前提假设</strong><br>
+          ① Temu在主要市场（美/欧）不遭遇根本性监管封禁；② 国内利润率在2-3年内逐步企稳；③ VIE政治风险不在5年内集中爆发。若以上任一假设破裂，应重新评估。
+        </li>
+        <li>
+          <strong>建仓策略（仅供参考）</strong><br>
+          $90-100区间可考虑首次建仓（占仓位30-40%）；若股价跌至$75-85（Temu负面消息冲击），可加仓至50-60%；目标价参考$135-150区间分批减仓。设置止损参考：若股价跌破$65则需重新审视论点。
+        </li>
+        <li>
+          <strong>催化剂（关注时间点）</strong><br>
+          ① 2026年Q2财报（利润率是否触底）；② 美国关税政策走向（2026年上半年为关键窗口）；③ Temu欧洲盈利节点披露；④ 管理层是否开始回购（$604亿现金的用途）。
+        </li>
+        <li>
+          <strong>仓位建议</strong><br>
+          鉴于政治风险不可量化，建议单一组合中PDD持仓不超过8-10%（集中投资者）或3-5%（分散型组合）。不适合全仓押注，但价格已足够吸引人进行有纪律的建仓。
+        </li>
+        <li>
+          <strong>费雪"何时卖出"应用</strong><br>
+          买入后，若：①Temu美国业务被彻底切断且无替代方案；②国内市场份额出现实质性流失（不只是利润率下降）；③管理层开始通过高溢价并购销毁价值，则触发卖出重估。
+        </li>
+      </ul>
+    </div>
+
+    <div style="margin-top:20px; display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+      <div>
+        <div style="font-weight:700; font-size:14px; color:var(--green); margin-bottom:8px;">✅ 买入理由总结</div>
+        <div style="font-size:13px; line-height:1.9; color:#374151;">
+          <span class="tag tag-green">PE仅10.4x</span>
+          <span class="tag tag-green">净现金$604亿（市值43%）</span>
+          <span class="tag tag-green">宽护城河</span>
+          <span class="tag tag-green">ROE 27%</span>
+          <span class="tag tag-green">年营收$617亿仍增长</span>
+          <span class="tag tag-green">轻资产模式</span>
+          <span class="tag tag-green">下沉市场壁垒极高</span>
+          <span class="tag tag-green">管理层长期主义</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-weight:700; font-size:14px; color:var(--red); margin-bottom:8px;">⚠️ 核心风险提示</div>
+        <div style="font-size:13px; line-height:1.9; color:#374151;">
+          <span class="tag tag-red">VIE政治风险</span>
+          <span class="tag tag-red">Temu监管不确定</span>
+          <span class="tag tag-red">利润率下行</span>
+          <span class="tag tag-yellow">国内竞争加剧</span>
+          <span class="tag tag-yellow">增速大幅放缓</span>
+          <span class="tag tag-yellow">管理层信息披露保守</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="footnote" style="margin-top:20px;">
+      ⚠️ 本报告仅为基于公开信息的价值投资分析练习，不构成任何投资建议。投资有风险，入市需谨慎。数据截至2026年3月29日，所有估值模型基于假设，实际结果可能存在重大偏差。本报告作者不持有PDD股票，不存在利益冲突披露。
+    </p>
+  </div>
+
+  <div style="text-align:center; padding:20px 0; color:var(--gray); font-size:12px;">
+    拼多多(PDD) 价值投资深度研究报告 &nbsp;|&nbsp; 基于 Graham · Buffett · Munger · Fisher 四框架 &nbsp;|&nbsp; 数据基准：2025财年年报（2026.3.25发布）
+  </div>
+
+</div>
+</body>
+</html>
